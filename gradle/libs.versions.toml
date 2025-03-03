@@ -1,7 +1,6 @@
 [versions]
 crate = "4.0.0-RC.2"
 commandapi = "9.7.0"
-flyway = "11.3.4"
 
 [libraries]
 # Core dependencies
@@ -19,22 +18,8 @@ commandapi-annotations = { module = "dev.jorel:commandapi-annotations", version.
 triumph-gui = "dev.triumphteam:triumph-gui:3.1.11"
 
 # Plugin dependencies
-bstats = "org.bstats:bstats-bukkit:3.1.0"
 vault = "com.github.MilkBowl:VaultAPI:1.7.1"
-packetevents = "com.github.retrooper:packetevents-spigot:2.7.0"
 placeholderapi = "me.clip:placeholderapi:2.11.6"
-
-# Database dependencies
-hikaricp = "com.zaxxer:HikariCP:6.2.1"
-flyway-core = { module = "org.flywaydb:flyway-core", version.ref = "flyway" }
-flyway-mysql = { module = "org.flywaydb:flyway-mysql", version.ref = "flyway" }
-jooq = "org.jooq:jooq:3.20.1"
-
-# JDBC drivers
-h2 = "com.h2database:h2:2.3.232"
-sqlite = "org.xerial:sqlite-jdbc:3.49.1.0"
-mysql = "com.mysql:mysql-connector-j:9.2.0"
-mariadb = "org.mariadb.jdbc:mariadb-java-client:3.5.2"
 
 # Testing
 junit-bom = "org.junit:junit-bom:5.12.0"
@@ -47,8 +32,6 @@ testcontainers-mysql = { module = "org.testcontainers:mysql" }
 testcontainers-mariadb = { module = "org.testcontainers:mariadb" }
 
 [bundles]
-flyway = ["flyway-core", "flyway-mysql"]
-jdbcdrivers = ["h2", "sqlite", "mysql", "mariadb"]
 junit = ["junit-jupiter", "junit-platform"]
 testcontainers = ["testcontainers-jupiter", "testcontainers-mysql", "testcontainers-mariadb"]
 
@@ -56,6 +39,3 @@ testcontainers = ["testcontainers-jupiter", "testcontainers-mysql", "testcontain
 shadow = "com.gradleup.shadow:8.3.6"
 run-paper = "xyz.jpenilla.run-paper:2.3.1"
 plugin-yml = "de.eldoria.plugin-yml.bukkit:0.7.1"
-paperweight = "io.papermc.paperweight.userdev:1.7.7"
-flyway = "org.flywaydb.flyway:11.3.4"
-jooq = "org.jooq.jooq-codegen-gradle:3.20.1"
