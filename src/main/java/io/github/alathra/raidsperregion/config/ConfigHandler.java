@@ -1,5 +1,6 @@
 package io.github.alathra.raidsperregion.config;
 
+import io.github.alathra.raidsperregion.core.preset.RaidPresetManager;
 import io.github.milkdrinkers.crate.Config;
 import io.github.alathra.raidsperregion.RaidsPerRegion;
 import io.github.alathra.raidsperregion.Reloadable;
@@ -32,6 +33,7 @@ public class ConfigHandler implements Reloadable {
 
     @Override
     public void onEnable(RaidsPerRegion plugin) {
+        RaidPresetManager.refreshPresets();
     }
 
     @Override

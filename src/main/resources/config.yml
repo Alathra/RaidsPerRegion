@@ -1,3 +1,7 @@
+# =========================================
+# |    RaidsPerRegion4 by ShermansWorld   |
+# =========================================
+
 # Update Checker Settings
 update-checker:
   enable: true
@@ -6,3 +10,109 @@ update-checker:
 
 # Translation, specify the language file to use, for example `en-US` which will load `/translations/en-US.yml`
 translation: "en-US"
+
+GlobalRaidSettings:
+  PreventVanillaMobsSpawningInRaids: true
+  ForceMobSpawningInRegionOnRaidStart: true
+  KeepInventoryOnPlayerDeath: false
+  KeepEXPOnPlayerDeath: false
+  DisablePvPInRaids: false
+  ClearMobsOnRaidLoss: false
+
+RaidPresets:
+  Skeletal:
+    default: false
+    boss:
+    mobs:
+      SkeletalMinion:
+        mobLevel: 1.0
+        chance: 0.60
+        weight: 1
+      SkeletalKnight:
+        mobLevel: 1.0
+        chance: 0.15
+        weight: 3
+      SkeletalKing:
+        mobLevel: 1.0
+        chance: 0.05
+        weight: 4
+  Everything:
+    default: true
+    boss: AngrySludge
+    mobs:
+      SkeletalMinion:
+        mobLevel: 1.0
+        chance: 0.60
+        weight: 1
+      StaticallyChargedSheep:
+        chance: 0.35
+        weight: 2
+        mobLevel: 1.0
+      SkeletalKnight:
+        mobLevel: 1.0
+        chance: 0.15
+        weight: 3
+      SkeletalKing:
+        mobLevel: 1.0
+        chance: 0.05
+        weight: 4
+
+RaidTiers:
+  1:
+    maxMobsAtOnce: 100
+    killsGoal: 100
+    timeLimit: 600
+    mobSpawnsPerCycle: 2
+    cycleRate: 1.0
+  2:
+    maxMobsAtOnce: 100
+    killsGoal: 100
+    timeLimit: 600
+    mobSpawnsPerCycle: 2
+    cycleRate: 1.0
+  3:
+    maxMobsAtOnce: 100
+    killsGoal: 100
+    timeLimit: 600
+    mobSpawnsPerCycle: 2
+    cycleRate: 1.0
+
+# ----- TITLE MESSAGES ------
+# Available Placeholders: @TIER @NAME @OWNER @BOSS
+
+RaidStartTitle: "&4&lTier @TIER Raid Inbound"
+RaidStartSubtitle: "&6Prepare to fight!"
+
+RaidWinTitle: "&2&lRaid Won!"
+RaidWinSubtitle: "&6The raiders have fled"
+
+RaidLoseTitle: "&4&lRaid Lost!"
+RaidLoseSubtitle: "&6This can't be good..."
+
+RaidStopTitle: "&b&lRaid Cancelled"
+RaidStopSubtitle: "&6Raid Cancelled by @OWNER"
+
+RaidBossTitle: "&c&lRaid Boss Spawned"
+RaidBossSubtitle: "&6Kill @BOSS to win the raid!"
+
+
+# -----RAID REWARDS/PUNISHMENTS ------
+# Use this for creating rewards/punishments for raid wins/losses.
+# Available Placeholders:
+# Global - @TIER @NAME @OWNER @BOSS
+# PerPlayer - @TIER @NAME @OWNER @BOSS @PLAYER
+
+UseWinLossCommands: true
+
+RaidWinCommands:
+  Global:
+    - "broadcast The tier @TIER raid on @NAME has been won!"
+  PerPlayer:
+    - "eco give @PLAYER 100"
+    - "msg @PLAYER nice job!"
+
+RaidLoseCommands:
+  Global:
+    - "broadcast The tier @TIER raid on @NAME has been lost!"
+  PerPlayer:
+    - "eco take @PLAYER 50"

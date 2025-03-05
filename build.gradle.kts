@@ -28,12 +28,22 @@ repositories {
     maven("https://mvn-repo.arim.space/lesser-gpl3/")
 
     maven("https://maven.athyrium.eu/releases") // Milkdrinkers
+    maven("https://jitpack.io/") {  // FastBoard (Scoreboard API)
+        content { includeGroup("fr.mrmicky") }
+    }
 
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
     maven("https://jitpack.io/") {
         content {
             includeGroup("com.github.MilkBowl") // VaultAPI
         }
+    }
+    maven("https://mvn.lumine.io/repository/maven-public/") { // MythicMobs
+        content { includeGroup("io.lumine") }
+    }
+    maven("https://maven.enginehub.org/repo/") // WorldGuard
+    maven("https://repo.glaremasters.me/repository/towny/") { // Towny
+        content { includeGroup("com.palmergames.bukkit.towny") }
     }
 }
 
@@ -57,12 +67,16 @@ dependencies {
     implementation(libs.triumph.gui) {
         exclude("net.kyori")
     }
+    implementation(libs.fastboard)
 
     // Plugin dependencies
     compileOnly(libs.vault)
     compileOnly(libs.placeholderapi) {
         exclude("me.clip.placeholderapi.libs", "kyori")
     }
+    compileOnly(libs.mythicmobs)
+    compileOnly(libs.worldguardbukkit)
+    compileOnly(libs.towny)
 
     // Testing - Core
     testImplementation(libs.annotations)
@@ -120,6 +134,7 @@ tasks {
         reloc("io.github.milkdrinkers.versionwatch", "versionwatch")
         reloc("dev.jorel.commandapi", "commandapi")
         reloc("dev.triumphteam.gui", "gui")
+        reloc("fr.mrmicky.fastboard", "fastboard")
 
         minimize()
     }
@@ -142,6 +157,9 @@ tasks {
         downloadPlugins {
             github("MilkBowl", "Vault", "1.7.3", "Vault.jar")
             hangar("PlaceholderAPI", "2.11.6")
+            modrinth("FastAsyncWorldEdit", "2.12.3")
+            modrinth("WorldGuard", "7.0.13")
+            modrinth("MythicMobs", "5.8.0")
         }
     }
 }
@@ -162,8 +180,8 @@ bukkit { // Options: https://github.com/Minecrell/plugin-yml#bukkit
 
     // Misc properties
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD // STARTUP or POSTWORLD
-    depend = listOf()
-    softDepend = listOf("Vault", "PlaceholderAPI")
+    depend = listOf("MythicMobs", "WorldGuard")
+    softDepend = listOf("Vault", "PlaceholderAPI, Towny")
     loadBefore = listOf()
     provides = listOf()
 }
