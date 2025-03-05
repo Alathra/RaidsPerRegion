@@ -30,8 +30,8 @@ public class RaidMobBuilder {
         return this;
     }
 
-    public RaidMobBuilder setWeight(@NotNull double chance) {
-        this.chance = chance;
+    public RaidMobBuilder setWeight(@NotNull int weight) {
+        this.weight = weight;
         return this;
     }
 

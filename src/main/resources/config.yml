@@ -59,18 +59,21 @@ RaidPresets:
 
 RaidTiers:
   1:
+    default: true
     maxMobsAtOnce: 100
     killsGoal: 100
     timeLimit: 600
     mobSpawnsPerCycle: 2
     cycleRate: 1.0
   2:
+    default: false
     maxMobsAtOnce: 100
     killsGoal: 100
     timeLimit: 600
     mobSpawnsPerCycle: 2
     cycleRate: 1.0
   3:
+    default: false
     maxMobsAtOnce: 100
     killsGoal: 100
     timeLimit: 600

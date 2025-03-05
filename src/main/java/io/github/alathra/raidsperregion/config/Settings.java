@@ -4,6 +4,8 @@ import io.github.alathra.raidsperregion.core.mob.RaidMob;
 import io.github.alathra.raidsperregion.core.mob.RaidMobBuilder;
 import io.github.alathra.raidsperregion.core.preset.RaidPreset;
 import io.github.alathra.raidsperregion.core.preset.RaidPresetBuilder;
+import io.github.alathra.raidsperregion.core.tier.RaidTier;
+import io.github.alathra.raidsperregion.core.tier.RaidTierBuilder;
 import io.github.alathra.raidsperregion.utility.Cfg;
 
 import java.util.ArrayList;
@@ -40,43 +42,65 @@ public class Settings {
         List<RaidPreset> raidPresets = new ArrayList<>();
         Map<?, ?> raidPresetsMap = Cfg.get().getMap("RaidPresets");
         for (Map.Entry<?, ?> presetEntry : raidPresetsMap.entrySet()) {
-            final String baseKey = "RaidPresets." + presetEntry.getKey().toString() + ".";
-            if (presetEntry.getValue() instanceof Map<?, ?>) {
-
-                final String presetName = presetEntry.getKey().toString();
-                final boolean isDefault = Cfg.get().getBoolean(baseKey + "default");
-                final String boss = Cfg.get().getOrDefault(baseKey + "boss", "");
-                final List<RaidMob> mobs = new ArrayList<>();
-                Map<?, ?> mobMap = Cfg.get().getMap(baseKey + "mobs");
-
-                for (Map.Entry<?, ?> mobEntry : mobMap.entrySet()) {
-                    final String mobName = mobEntry.getKey().toString();
-                    final String mobKey = baseKey + "mobs." + mobEntry.getKey().toString() + ".";
-                    final double level = Cfg.get().getDouble(mobKey + "mobLevel");
-                    final double chance = Cfg.get().getDouble(mobKey + "chance");
-                    final int weight = Cfg.get().getInt(mobKey + "weight");
-                    mobs.add(
-                        new RaidMobBuilder()
-                            .setName(mobName)
-                            .setLevel(level)
-                            .setChance(chance)
-                            .setWeight(weight)
-                            .build()
-                    );
-                }
-
-                raidPresets.add(
-                    new RaidPresetBuilder()
-                        .setName(presetName)
-                        .setDefault(isDefault)
-                        .setBoss(boss)
-                        .setRaidMobs(mobs)
+            final String presetName = presetEntry.getKey().toString();
+            final String baseKey = "RaidPresets." + presetName + ".";
+            final boolean isDefault = Cfg.get().getBoolean(baseKey + "default");
+            final String boss = Cfg.get().getOrDefault(baseKey + "boss", "");
+            final List<RaidMob> mobs = new ArrayList<>();
+            Map<?, ?> mobMap = Cfg.get().getMap(baseKey + "mobs");
+            for (Map.Entry<?, ?> mobEntry : mobMap.entrySet()) {
+                final String mobName = mobEntry.getKey().toString();
+                final String mobKey = baseKey + "mobs." + mobName + ".";
+                final double level = Cfg.get().getDouble(mobKey + "mobLevel");
+                final double chance = Cfg.get().getDouble(mobKey + "chance");
+                final int weight = Cfg.get().getInt(mobKey + "weight");
+                mobs.add(
+                    new RaidMobBuilder()
+                        .setName(mobName)
+                        .setLevel(level)
+                        .setChance(chance)
+                        .setWeight(weight)
                         .build()
                 );
-
             }
+            raidPresets.add(
+                new RaidPresetBuilder()
+                    .setName(presetName)
+                    .setDefault(isDefault)
+                    .setBoss(boss)
+                    .setRaidMobs(mobs)
+                    .build()
+            );
+
         }
         return raidPresets;
+    }
+
+    public static List<RaidTier> getRaidTiers() {
+        List<RaidTier> raidTiers = new ArrayList<>();
+        Map<?, ?> raidTiersMap = Cfg.get().getMap("RaidTiers");
+        for (Map.Entry<?, ?> tierEntry : raidTiersMap.entrySet()) {
+            final String name = tierEntry.getKey().toString();
+            final String baseKey = "RaidTiers." + name + ".";
+            final boolean isDefault = Cfg.get().getBoolean(baseKey + "default");
+            final int maxMobsAtOnce = Cfg.get().getInt(baseKey + "maxMobsAtOnce");
+            final int killsGoal = Cfg.get().getInt(baseKey + "killsGoal");
+            final int timeLimit = Cfg.get().getInt(baseKey + "timeLimit");
+            final int mobSpawnsPerCycle = Cfg.get().getInt(baseKey + "mobSpawnsPerCycle");
+            final double cycleRate = Cfg.get().getDouble(baseKey + "cycleRate");
+            raidTiers.add(
+                new RaidTierBuilder()
+                    .setName(name)
+                    .setDefault(isDefault)
+                    .setMaxMobsAtOnce(maxMobsAtOnce)
+                    .setKillsGoal(killsGoal)
+                    .setTimeLimit(timeLimit)
+                    .setMobSpawnsPerCycle(mobSpawnsPerCycle)
+                    .setCycleRate(cycleRate)
+                    .build()
+            );
+        }
+        return raidTiers;
     }
 
 
