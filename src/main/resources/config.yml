@@ -1,6 +1,6 @@
-# =========================================
-# |    RaidsPerRegion4 by ShermansWorld   |
-# =========================================
+# ==========================================
+# |    RaidsPerRegion4 by ShermansWorld    |
+# ==========================================
 
 # Update Checker Settings
 update-checker:
@@ -99,8 +99,8 @@ RaidResultConsoleCommands:
     global:
       - "broadcast The tier @TIER raid on @NAME has been won!"
     perParticipant:
-    - "eco give @PLAYER 100"
-    - "msg @PLAYER nice job!"
+      - "eco give @PLAYER 100"
+      - "msg @PLAYER nice job!"
   raidLossCommands:
     global:
       - "broadcast The tier @TIER raid on @NAME has been lost!"
