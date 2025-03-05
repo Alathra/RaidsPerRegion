@@ -80,42 +80,29 @@ RaidTiers:
     mobSpawnsPerCycle: 2
     cycleRate: 1.0
 
-# ----- TITLE MESSAGES ------
-# Available Placeholders: @TIER @NAME @OWNER @BOSS
+TitleMessages:
+  enabled: true
+  RaidStartTitle: "&4&lTier @TIER Raid Inbound"
+  RaidStartSubtitle: "&6Prepare to fight!"
+  RaidWinTitle: "&2&lRaid Won!"
+  RaidWinSubtitle: "&6The raiders have fled"
+  RaidLoseTitle: "&4&lRaid Lost!"
+  RaidLoseSubtitle: "&6This can't be good..."
+  RaidCancelTitle: "&b&lRaid Cancelled"
+  RaidCancelSubtitle: "&6Raid Cancelled by @OWNER"
+  RaidBossSpawnTitle: "&c&lRaid Boss Spawned"
+  RaidBossSpawnSubtitle: "&6Kill @BOSS to win the raid!"
 
-RaidStartTitle: "&4&lTier @TIER Raid Inbound"
-RaidStartSubtitle: "&6Prepare to fight!"
-
-RaidWinTitle: "&2&lRaid Won!"
-RaidWinSubtitle: "&6The raiders have fled"
-
-RaidLoseTitle: "&4&lRaid Lost!"
-RaidLoseSubtitle: "&6This can't be good..."
-
-RaidStopTitle: "&b&lRaid Cancelled"
-RaidStopSubtitle: "&6Raid Cancelled by @OWNER"
-
-RaidBossTitle: "&c&lRaid Boss Spawned"
-RaidBossSubtitle: "&6Kill @BOSS to win the raid!"
-
-
-# -----RAID REWARDS/PUNISHMENTS ------
-# Use this for creating rewards/punishments for raid wins/losses.
-# Available Placeholders:
-# Global - @TIER @NAME @OWNER @BOSS
-# PerPlayer - @TIER @NAME @OWNER @BOSS @PLAYER
-
-UseWinLossCommands: true
-
-RaidWinCommands:
-  Global:
-    - "broadcast The tier @TIER raid on @NAME has been won!"
-  PerPlayer:
+RaidResultConsoleCommands:
+  enabled: true
+  raidWinCommands:
+    global:
+      - "broadcast The tier @TIER raid on @NAME has been won!"
+    perParticipant:
     - "eco give @PLAYER 100"
     - "msg @PLAYER nice job!"
-
-RaidLoseCommands:
-  Global:
-    - "broadcast The tier @TIER raid on @NAME has been lost!"
-  PerPlayer:
-    - "eco take @PLAYER 50"
+  raidLossCommands:
+    global:
+      - "broadcast The tier @TIER raid on @NAME has been lost!"
+    perParticipant:
+      - "eco take @PLAYER 50"
