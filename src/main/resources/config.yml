@@ -8,9 +8,6 @@ update-checker:
   console: true # Post message to console
   op: true # Send update notification to opped players on join
 
-# Translation, specify the language file to use, for example `en-US` which will load `/translations/en-US.yml`
-translation: "en-US"
-
 GlobalRaidSettings:
   PreventVanillaMobsSpawningInRaids: true
   ForceMobSpawningInRegionOnRaidStart: true
@@ -18,6 +15,7 @@ GlobalRaidSettings:
   KeepEXPOnPlayerDeath: false
   DisablePvPInRaids: false
   ClearMobsOnRaidLoss: false
+  ShowPlayerDeathMessagesInRaids: true
 
 RaidPresets:
   Skeletal:
@@ -82,27 +80,27 @@ RaidTiers:
 
 TitleMessages:
   enabled: true
-  RaidStartTitle: "&4&lTier @TIER Raid Inbound"
-  RaidStartSubtitle: "&6Prepare to fight!"
-  RaidWinTitle: "&2&lRaid Won!"
-  RaidWinSubtitle: "&6The raiders have fled"
-  RaidLoseTitle: "&4&lRaid Lost!"
-  RaidLoseSubtitle: "&6This can't be good..."
-  RaidCancelTitle: "&b&lRaid Cancelled"
-  RaidCancelSubtitle: "&6Raid Cancelled by @OWNER"
-  RaidBossSpawnTitle: "&c&lRaid Boss Spawned"
-  RaidBossSpawnSubtitle: "&6Kill @BOSS to win the raid!"
+  raidStartTitle: "<dark_red><bold>Tier <raid_tier> Raid Inbound"
+  raidStartSubtitle: "<gold>Prepare to fight!"
+  raidWinTitle: "<dark_green><bold>Raid Won!"
+  raidWinSubtitle: "<gold>The raiders have fled"
+  raidLoseTitle: "<dark_red><bold>Raid Lost!"
+  raidLoseSubtitle: "<gold>This can't be good..."
+  raidCancelTitle: "<aqua><bold>Raid Cancelled"
+  raidCancelSubtitle: "<gold>Raid Cancelled by <raid_starter>"
+  raidBossSpawnTitle: "<red><bold>Raid Boss Spawned"
+  raidBossSpawnSubtitle: "<gold>Kill <boss_name> to win the raid!"
 
 RaidResultConsoleCommands:
   enabled: true
   raidWinCommands:
     global:
-      - "broadcast The tier @TIER raid on @NAME has been won!"
+      - "broadcast The tier <raid_tier> raid on <raid_area_name> has been won!"
     perParticipant:
-      - "eco give @PLAYER 100"
-      - "msg @PLAYER nice job!"
+      - "eco give <raid_participant_name> 100"
+      - "msg <raid_participant_name> nice job!"
   raidLossCommands:
     global:
-      - "broadcast The tier @TIER raid on @NAME has been lost!"
+      - "broadcast The tier <raid_tier> raid on <raid_area_name> has been lost!"
     perParticipant:
-      - "eco take @PLAYER 50"
+      - "eco take <raid_participant_name> 50"

@@ -1,6 +1,6 @@
-package io.github.alathra.raidsperregion.core.preset;
+package io.github.alathra.raidsperregion.raid.preset;
 
-import io.github.alathra.raidsperregion.core.mob.RaidMob;
+import io.github.alathra.raidsperregion.raid.mob.RaidMob;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;

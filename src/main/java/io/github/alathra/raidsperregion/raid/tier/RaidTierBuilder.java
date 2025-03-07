@@ -1,4 +1,4 @@
-package io.github.alathra.raidsperregion.core.tier;
+package io.github.alathra.raidsperregion.raid.tier;
 
 import org.jetbrains.annotations.NotNull;
 

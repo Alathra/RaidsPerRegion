@@ -1,4 +1,4 @@
-package io.github.alathra.raidsperregion.core.tier;
+package io.github.alathra.raidsperregion.raid.tier;
 
 public class RaidTier {
     private final String name;

@@ -1,11 +1,11 @@
 package io.github.alathra.raidsperregion.config;
 
-import io.github.alathra.raidsperregion.core.mob.RaidMob;
-import io.github.alathra.raidsperregion.core.mob.RaidMobBuilder;
-import io.github.alathra.raidsperregion.core.preset.RaidPreset;
-import io.github.alathra.raidsperregion.core.preset.RaidPresetBuilder;
-import io.github.alathra.raidsperregion.core.tier.RaidTier;
-import io.github.alathra.raidsperregion.core.tier.RaidTierBuilder;
+import io.github.alathra.raidsperregion.raid.mob.RaidMob;
+import io.github.alathra.raidsperregion.raid.mob.RaidMobBuilder;
+import io.github.alathra.raidsperregion.raid.preset.RaidPreset;
+import io.github.alathra.raidsperregion.raid.preset.RaidPresetBuilder;
+import io.github.alathra.raidsperregion.raid.tier.RaidTier;
+import io.github.alathra.raidsperregion.raid.tier.RaidTierBuilder;
 import io.github.alathra.raidsperregion.utility.Cfg;
 
 import java.util.ArrayList;
@@ -15,27 +15,31 @@ import java.util.Map;
 public class Settings {
 
     public static boolean preventVanillaMobsSpawnInRaids() {
-        return Cfg.get().get("GlobalRaidSettings.PreventVanillaMobsSpawningInRaids", true);
+        return Cfg.get().getOrDefault("GlobalRaidSettings.PreventVanillaMobsSpawningInRaids", true);
     }
 
     public static boolean forceMobSpawningInRegionOnRaidStart() {
-        return Cfg.get().get("GlobalSettings.ForceMobSpawningInRegionOnRaidStart", true);
+        return Cfg.get().getOrDefault("GlobalSettings.ForceMobSpawningInRegionOnRaidStart", true);
     }
 
     public static boolean keepInventoryOnPlayerDeath() {
-        return Cfg.get().get("GlobalSettings.KeepInventoryOnPlayerDeath", false);
+        return Cfg.get().getOrDefault("GlobalSettings.KeepInventoryOnPlayerDeath", false);
     }
 
     public static boolean keepEXPOnPlayerDeath() {
-        return Cfg.get().get("GlobalSettings.KeepEXPOnPlayerDeath", false);
+        return Cfg.get().getOrDefault("GlobalSettings.KeepEXPOnPlayerDeath", false);
     }
 
     public static boolean disablePvPInRaids() {
-        return Cfg.get().get("GlobalSettings.DisablePvPInRaids", false);
+        return Cfg.get().getOrDefault("GlobalSettings.DisablePvPInRaids", false);
     }
 
     public static boolean clearMobsOnRaidLoss() {
-        return Cfg.get().get("GlobalSettings.ClearMobsOnRaidLoss", false);
+        return Cfg.get().getOrDefault("GlobalSettings.ClearMobsOnRaidLoss", false);
+    }
+
+    public static boolean arePlayerDeathMessagesShownInRaids() {
+        return Cfg.get().getOrDefault("GlobalSettings.ShowPlayerDeathMessagesInRaids", true);
     }
 
     public static List<RaidPreset> getRaidPresets() {
@@ -71,7 +75,6 @@ public class Settings {
                     .setRaidMobs(mobs)
                     .build()
             );
-
         }
         return raidPresets;
     }
@@ -103,5 +106,76 @@ public class Settings {
         return raidTiers;
     }
 
+    public static boolean areTitleMessagesEnabled() {
+        return Cfg.get().getOrDefault("TitleMessages.enabled", false);
+    }
+
+    public static String getRaidStartTitle() {
+        return Cfg.get().getString("TitleMessages.raidStartTitle");
+    }
+
+    public static String getRaidStartSubtitle() {
+        return Cfg.get().getString("TitleMessages.raidStartSubtitle");
+    }
+
+    public static String getRaidWinTitle() {
+        return Cfg.get().getString("TitleMessages.raidWinTitle");
+    }
+
+    public static String getRaidWinSubtitle() {
+        return Cfg.get().getString("TitleMessages.raidWinSubtitle");
+    }
+
+    public static String getRaidLoseTitle() {
+        return Cfg.get().getString("TitleMessages.raidLoseTitle");
+    }
+
+    public static String getRaidLoseSubtitle() {
+        return Cfg.get().getString("TitleMessages.raidLoseSubtitle");
+    }
+
+    public static String getRaidCancelTitle() {
+        return Cfg.get().getString("TitleMessages.raidCancelTitle");
+    }
+
+    public static String getRaidCancelSubtitle() {
+        return Cfg.get().getString("TitleMessages.raidCancelSubtitle");
+    }
+
+    public static String raidBossSpawnTitle() {
+        return Cfg.get().getString("TitleMessages.raidBossSpawnTitle");
+    }
+
+    public static String raidBossSpawnSubtitle() {
+        return Cfg.get().getString("TitleMessages.raidBossSpawnSubtitle");
+    }
+
+    public static boolean areRaidResultConsoleCommandsEnabled() {
+        return Cfg.get().getOrDefault("RaidResultConsoleCommands.enabled", false);
+    }
+
+    public static List<String> getRaidWinGlobalCommands() {
+        @SuppressWarnings("unchecked")
+        List<String> globalWinCommands = (List<String>) Cfg.get().getList("RaidResultConsoleCommands.raidWinCommands.global");
+        return globalWinCommands;
+    }
+
+    public static List<String> getRaidWinPerParticipantCommands() {
+        @SuppressWarnings("unchecked")
+        List<String> perParticipantWinCommands = (List<String>) Cfg.get().getList("RaidResultConsoleCommands.raidWinCommands.perParticipant");
+        return perParticipantWinCommands;
+    }
+
+    public static List<String> getRaidLossGlobalCommands() {
+        @SuppressWarnings("unchecked")
+        List<String> globalLossCommands = (List<String>) Cfg.get().getList("RaidResultConsoleCommands.raidLossCommands.global");
+        return globalLossCommands;
+    }
+
+    public static List<String> getRaidLossPerParticipantCommands() {
+        @SuppressWarnings("unchecked")
+        List<String> perParticipantsLossCommands = (List<String>) Cfg.get().getList("RaidResultConsoleCommands.raidLossCommands.perParticipant");
+        return perParticipantsLossCommands;
+    }
 
 }

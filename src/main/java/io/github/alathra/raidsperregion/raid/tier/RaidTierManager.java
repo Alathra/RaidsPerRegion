@@ -1,4 +1,4 @@
-package io.github.alathra.raidsperregion.core.tier;
+package io.github.alathra.raidsperregion.raid.tier;
 
 import io.github.alathra.raidsperregion.config.Settings;
 import io.github.alathra.raidsperregion.utility.Logger;

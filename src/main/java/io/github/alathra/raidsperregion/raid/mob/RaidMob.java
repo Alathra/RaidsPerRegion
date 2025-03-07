@@ -1,4 +1,4 @@
-package io.github.alathra.raidsperregion.core.mob;
+package io.github.alathra.raidsperregion.raid.mob;
 
 public class RaidMob {
     private final String name;

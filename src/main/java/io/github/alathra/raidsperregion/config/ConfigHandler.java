@@ -1,6 +1,6 @@
 package io.github.alathra.raidsperregion.config;
 
-import io.github.alathra.raidsperregion.core.preset.RaidPresetManager;
+import io.github.alathra.raidsperregion.raid.preset.RaidPresetManager;
 import io.github.milkdrinkers.crate.Config;
 import io.github.alathra.raidsperregion.RaidsPerRegion;
 import io.github.alathra.raidsperregion.Reloadable;

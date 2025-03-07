@@ -22,15 +22,12 @@ java {
 }
 
 repositories {
-    mavenCentral()
+    mavenCentral() // Scoreboard-library
 
     maven("https://repo.papermc.io/repository/maven-public/") // Paper
     maven("https://mvn-repo.arim.space/lesser-gpl3/")
 
     maven("https://maven.athyrium.eu/releases") // Milkdrinkers
-    maven("https://jitpack.io/") {  // FastBoard (Scoreboard API)
-        content { includeGroup("fr.mrmicky") }
-    }
 
     maven("https://repo.extendedclip.com/content/repositories/placeholderapi/") // PlaceholderAPI
     maven("https://jitpack.io/") {
@@ -67,7 +64,9 @@ dependencies {
     implementation(libs.triumph.gui) {
         exclude("net.kyori")
     }
-    implementation(libs.fastboard)
+    implementation(libs.scoreboardlibraryapi)
+    runtimeOnly(libs.scoreboardlibraryruntime)
+    runtimeOnly(libs.scoreboardlibrarymodernpacketadapter)
 
     // Plugin dependencies
     compileOnly(libs.vault)

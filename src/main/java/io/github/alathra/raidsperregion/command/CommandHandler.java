@@ -36,7 +36,7 @@ public class CommandHandler implements Reloadable {
         CommandAPI.onEnable();
 
         // Register commands here
-        new ExampleCommand();
+        //new ExampleCommand();
     }
 
     @Override

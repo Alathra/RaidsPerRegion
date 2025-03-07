@@ -1,6 +1,6 @@
-package io.github.alathra.raidsperregion.core.preset;
+package io.github.alathra.raidsperregion.raid.preset;
 
-import io.github.alathra.raidsperregion.core.mob.RaidMob;
+import io.github.alathra.raidsperregion.raid.mob.RaidMob;
 
 import java.util.List;
 
@@ -31,5 +31,9 @@ public class RaidPreset {
 
     public List<RaidMob> getMobs() {
         return mobs;
+    }
+
+    public boolean hasBoss() {
+        return (boss != null && !boss.isBlank());
     }
 }
