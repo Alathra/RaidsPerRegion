@@ -142,11 +142,11 @@ public class Settings {
         return Cfg.get().getString("TitleMessages.raidCancelSubtitle");
     }
 
-    public static String raidBossSpawnTitle() {
+    public static String getRaidBossSpawnTitle() {
         return Cfg.get().getString("TitleMessages.raidBossSpawnTitle");
     }
 
-    public static String raidBossSpawnSubtitle() {
+    public static String getRaidBossSpawnSubtitle() {
         return Cfg.get().getString("TitleMessages.raidBossSpawnSubtitle");
     }
 

@@ -7,6 +7,7 @@ import io.github.alathra.raidsperregion.listener.ListenerHandler;
 import io.github.alathra.raidsperregion.updatechecker.UpdateHandler;
 
 import io.github.alathra.raidsperregion.utility.Logger;
+import io.github.alathra.raidsperregion.utility.MythicMobsUtil;
 import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
 import net.megavex.scoreboardlibrary.api.exception.NoPacketAdapterAvailableException;
 import net.megavex.scoreboardlibrary.api.noop.NoopScoreboardLibrary;
@@ -70,6 +71,9 @@ public class RaidsPerRegion extends JavaPlugin {
             scoreboardLibrary = new NoopScoreboardLibrary();
             Logger.get().warn("No scoreboard packet adapter available!");
         }
+
+        // Initialize MythicMobsUtil
+        MythicMobsUtil.init();
 
     }
 
