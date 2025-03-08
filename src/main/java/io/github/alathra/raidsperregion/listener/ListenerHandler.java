@@ -11,14 +11,10 @@ import java.util.List;
  * A class to handle registration of event listeners.
  */
 public class ListenerHandler implements Reloadable {
+
     private final RaidsPerRegion plugin;
     private final List<Listener> listeners = new ArrayList<>();
 
-    /**
-     * Instantiates a the Listener handler.
-     *
-     * @param plugin the plugin instance
-     */
     public ListenerHandler(RaidsPerRegion plugin) {
         this.plugin = plugin;
     }
@@ -30,7 +26,10 @@ public class ListenerHandler implements Reloadable {
     @Override
     public void onEnable(RaidsPerRegion plugin) {
         listeners.clear(); // Clear the list to avoid duplicate listeners when reloading the plugin
-//        listeners.add(new ExampleListener());
+        listeners.add(new MobSpawnListener(plugin));
+        listeners.add(new PlayerDeathListener());
+        listeners.add(new PvPListener());
+        listeners.add(new RaidKillListener());
 
         // Register listeners here
         for (Listener listener : listeners) {

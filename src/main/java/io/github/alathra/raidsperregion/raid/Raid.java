@@ -9,6 +9,7 @@ import io.github.alathra.raidsperregion.config.Settings;
 import io.github.alathra.raidsperregion.raid.area.RaidArea;
 import io.github.alathra.raidsperregion.raid.preset.RaidPreset;
 import io.github.alathra.raidsperregion.raid.tier.RaidTier;
+import io.github.alathra.raidsperregion.utility.Logger;
 import io.github.alathra.raidsperregion.utility.MythicMobsUtil;
 import io.github.alathra.raidsperregion.utility.RandomUtil;
 import io.github.milkdrinkers.colorparser.ColorParser;
@@ -296,7 +297,9 @@ public class Raid {
     }
 
     public void startRaid(CommandSender sender, boolean isConsole) {
-        RaidManager.registerRaid(this);
+        if (!RaidManager.registerRaid(this)) {
+            Logger.get().warn("Failed to start new raid because a raid already exists in this area");
+        }
 
         // see if mob spawning is allowed in region, and force it on if necessary
         if (Settings.forceMobSpawningInRegionOnRaidStart())
@@ -313,6 +316,7 @@ public class Raid {
         secondsLeft--;
         updateParticipants();
         updateScoreboards();
+        cleanStoredMobs();
 
         // check for win
         if (getTotalKills() >= tier.getKillsGoal()) {
@@ -475,28 +479,28 @@ public class Raid {
         }
     }
 
-    public boolean spawnBoss(int distanceFactor) {
+    public void spawnBoss(int distanceFactor) {
         // GET RANDOM PLAYER FROM ACTIVE PARTICIPANTS
 
         if (this.getActiveParticipants().isEmpty()) {
-            return false;
+            return;
         }
 
         UUID randomPlayerUUID = RandomUtil.getRandomElementInSet(activeParticipants);
         if (randomPlayerUUID == null) {
-            return false;
+            return;
         }
         OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(randomPlayerUUID);
         Player player;
         if (!offlinePlayer.isOnline()) {
-            return false;
+            return;
         } else {
             player = (Player) offlinePlayer;
         }
 
         // If raid mobs already spawned is at the limit, do not spawn
         if (mobs.size() >= tier.getKillsGoal()) {
-            return false;
+            return;
         }
 
         final int distanceFactorSubtractionPerSpawn = distanceFactor / 10;
@@ -566,17 +570,17 @@ public class Raid {
             // spawn boss
             bossMob = MythicMobsUtil.spawnMob(preset.getBoss(), spawnLocation);
             if (bossMob == null || bossMob.isDead()) {
-                return false;
+                return;
             }
 
+            isBossSpawned = true;
             if (Settings.areTitleMessagesEnabled())
                 sendTitleToParticipants(Settings.getRaidBossSpawnTitle(), Settings.getRaidBossSpawnSubtitle());
 
             // break out of method, boss spawned
-            return true;
+            return;
         }
 
-        return false;
     }
 
     // Getters and Setters
@@ -597,6 +601,10 @@ public class Raid {
         return preset;
     }
 
+    public RaidArea getArea() {
+        return area;
+    }
+
     public RaidTier getTier() {
         return tier;
     }
@@ -613,12 +621,20 @@ public class Raid {
         return mobs;
     }
 
+    public @Nullable ActiveMob getBossMob() {
+        return bossMob;
+    }
+
     public boolean hasBossSpawned() {
         return isBossSpawned;
     }
 
     public boolean hasBossBeenKilled() {
         return isBossKilled;
+    }
+
+    public void setBossKilled(boolean isBossKilled) {
+        this.isBossKilled = isBossKilled;
     }
 
 }
