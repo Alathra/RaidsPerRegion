@@ -50,7 +50,7 @@ public class Raid {
     // The number of seconds remaining in the raid
     private int secondsLeft;
     // The ActiveMobs (entities) of the spawned mobs in the raid
-    private Set<ActiveMob> mobs;
+    private final Set<ActiveMob> mobs;
     // The ActiveMob (essentially entity) of the boss. Set when the boss is spawned
     private ActiveMob bossMob;
     // If the boss has been spawned (if applicable)
@@ -324,12 +324,7 @@ public class Raid {
     }
 
     public void stop() {
-        area.resetMobSpawningToDefault();
-        raidTimer.cancel();
-        spawnMobsTimer.cancel();
-        clearSpawnedMobs();
-        removeScoreboards();
-        RaidManager.deRegisterRaid(this);
+        closeOut();
 
         if (Settings.areTitleMessagesEnabled())
             sendTitleToParticipants(Settings.getRaidCancelTitle(), Settings.getRaidCancelSubtitle());
@@ -356,12 +351,7 @@ public class Raid {
             }
         }
 
-        area.resetMobSpawningToDefault();
-        raidTimer.cancel();
-        spawnMobsTimer.cancel();
-        clearSpawnedMobs();
-        removeScoreboards();
-        RaidManager.deRegisterRaid(this);
+        closeOut();
 
         if (Settings.areTitleMessagesEnabled())
             sendTitleToParticipants(Settings.getRaidWinTitle(), Settings.getRaidWinSubtitle());
@@ -371,12 +361,7 @@ public class Raid {
     }
 
     public void onRaidLoss() {
-        area.resetMobSpawningToDefault();
-        raidTimer.cancel();
-        spawnMobsTimer.cancel();
-        clearSpawnedMobs();
-        removeScoreboards();
-        RaidManager.deRegisterRaid(this);
+        closeOut();
 
         if (Settings.clearMobsOnRaidLoss())
             clearSpawnedMobs();
@@ -608,6 +593,16 @@ public class Raid {
             .parseMinimessagePlaceholder("raid_participants_total_deaths", String.valueOf(playerDeaths))
             .parsePAPIPlaceholders(participant)
             .build();
+    }
+
+    private void closeOut() {
+        if(!area.resetMobSpawningToDefault())
+            Logger.get().warn("Encountered internal error when resetting mob spawning for raid area <raid_area_name>");
+        raidTimer.cancel();
+        spawnMobsTimer.cancel();
+        clearSpawnedMobs();
+        removeScoreboards();
+        RaidManager.deRegisterRaid(this);
     }
 
     // Getters and Setters

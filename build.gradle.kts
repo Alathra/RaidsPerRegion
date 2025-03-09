@@ -33,6 +33,7 @@ repositories {
     maven("https://jitpack.io/") {
         content {
             includeGroup("com.github.MilkBowl") // VaultAPI
+            includeGroup("com.github.cryptomorin") // KingdomsX
         }
     }
     maven("https://mvn.lumine.io/repository/maven-public/") { // MythicMobs
@@ -76,6 +77,7 @@ dependencies {
     compileOnly(libs.mythicmobs)
     compileOnly(libs.worldguardbukkit)
     compileOnly(libs.towny)
+    compileOnly(libs.kingdomsx)
 
     // Testing - Core
     testImplementation(libs.annotations)
@@ -178,7 +180,7 @@ bukkit { // Options: https://github.com/Minecrell/plugin-yml#bukkit
     // Misc properties
     load = net.minecrell.pluginyml.bukkit.BukkitPluginDescription.PluginLoadOrder.POSTWORLD // STARTUP or POSTWORLD
     depend = listOf("MythicMobs", "WorldGuard")
-    softDepend = listOf("Vault", "PlaceholderAPI, Towny")
+    softDepend = listOf("Vault", "PlaceholderAPI, Towny, Kingdoms")
     loadBefore = listOf()
     provides = listOf()
 }

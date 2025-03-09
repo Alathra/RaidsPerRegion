@@ -61,9 +61,10 @@ public abstract class RaidArea {
     public static void setTypes() {
         types.add("region");
         Bukkit.getScheduler().runTaskLater(RaidsPerRegion.getInstance(), () -> {
-            if (Hook.Towny.isLoaded()) {
+            if (Hook.Towny.isLoaded())
                 types.add("town");
-            }
+            if (Hook.KingdomsX.isLoaded())
+                types.add("kingdom");
         }, 1L);
     }
 

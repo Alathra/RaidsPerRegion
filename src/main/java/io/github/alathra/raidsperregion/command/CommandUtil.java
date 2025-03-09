@@ -14,6 +14,7 @@ import dev.jorel.commandapi.arguments.StringArgument;
 import io.github.alathra.raidsperregion.hook.Hook;
 import io.github.alathra.raidsperregion.raid.Raid;
 import io.github.alathra.raidsperregion.raid.RaidManager;
+import io.github.alathra.raidsperregion.raid.area.KingdomRaidArea;
 import io.github.alathra.raidsperregion.raid.area.RaidArea;
 import io.github.alathra.raidsperregion.raid.area.RegionRaidArea;
 import io.github.alathra.raidsperregion.raid.area.TownRaidArea;
@@ -24,6 +25,8 @@ import io.github.alathra.raidsperregion.raid.tier.RaidTierManager;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.kingdoms.constants.group.Kingdom;
+import org.kingdoms.main.Kingdoms;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,15 +51,22 @@ public class CommandUtil {
                         throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Encountered error when loading Worldguard RegionManager").build());
                     ProtectedRegion region = regionManager.getRegion(argAreaName);
                     if (region == null)
-                        throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid area name").build());
+                        throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid region name").build());
                     return new RegionRaidArea(region);
                 case "town":
                     if (Hook.getTownyHook().isHookLoaded()) {
                         TownyAPI townyAPI = TownyAPI.getInstance();
                         Town town = townyAPI.getTown(argAreaName);
                         if (town == null)
-                            throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid area name").build());
+                            throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid town name").build());
                         return new TownRaidArea(town);
+                    }
+                case "kingdom":
+                    if (Hook.KingdomsX.isLoaded()) {
+                        Kingdom kingdom = Kingdom.getKingdom(argAreaName);
+                        if (kingdom == null)
+                            throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid kingdom name").build());
+                        return new KingdomRaidArea(kingdom);
                     }
                 default:
                     throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid raid type argument").build());
@@ -77,12 +87,21 @@ public class CommandUtil {
                         return Collections.emptyList();
                     return regionManager.getRegions().keySet();
                 case "town":
-                    if (Hook.getTownyHook().isHookLoaded()) {
+                    if (Hook.Towny.isLoaded()) {
                         TownyAPI townyAPI = TownyAPI.getInstance();
                         TownyWorld townyWorld = townyAPI.getTownyWorld(world);
                         if (townyWorld != null) {
                             return townyWorld.getTowns().keySet();
                         }
+                    }
+                case "kingdom":
+                    if (Hook.KingdomsX.isLoaded()) {
+                        // Get all kingdoms
+                        List<Kingdom> kingdoms = new ArrayList<>(Kingdoms.get().getDataCenter().getKingdomManager().getKingdoms());
+                        // Prune all not in selected world
+                        kingdoms.removeIf(kingdom -> !kingdom.getNexus().getBukkitWorld().equals(world));
+                        // return suggestions
+                        return kingdoms.stream().map(Kingdom::getName).toList();
                     }
                 default:
                     return Collections.emptyList();

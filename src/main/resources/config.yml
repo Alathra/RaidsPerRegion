@@ -2,12 +2,6 @@
 # |    RaidsPerRegion4 by ShermansWorld    |
 # ==========================================
 
-# Update Checker Settings
-update-checker:
-  enable: true
-  console: true # Post message to console
-  op: true # Send update notification to opped players on join
-
 GlobalRaidSettings:
   PreventVanillaMobsSpawningInRaids: true
   ForceMobSpawningInRegionOnRaidStart: true
