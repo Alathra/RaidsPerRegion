@@ -128,19 +128,13 @@ public class Raid {
     }
 
     public ComponentSidebarLayout generateScoreboardLayout(OfflinePlayer player) {
-        Component titleComponent = parseMessage("<dark_red><bold> Tier <raid_tier> Raid - <raid_area_name>", player);
-        Component borderComponent = ColorParser.of("<dark_red><bold>" + StringUtil.generateRepeatingCharString(StringUtil.getNumCharsInComponent(titleComponent), '-')).build();
+        Component titleComponent = parseMessage(Settings.getScoreboardTitle(), player);
         SidebarComponent title = SidebarComponent.staticLine(titleComponent);
-        SidebarComponent lines = SidebarComponent.builder()
-            .addStaticLine(borderComponent)
-            .addDynamicLine(() -> parseMessage("<gold>Time Left: <raid_time_left>", player))
-            .addDynamicLine(() -> parseMessage("<gold>Kills Goal: <raid_kills_goal>", player))
-            .addDynamicLine(() -> parseMessage("<gold>Total Kills: <raid_total_kills>", player))
-            .addDynamicLine(() -> parseMessage("<gold>Total Player Deaths: <raid_participants_total_deaths>", player))
-            .addStaticLine(borderComponent)
-            .addDynamicLine(() -> parseMessage("<gold>Your Kills: <raid_participant_kills>", player))
-            .build();
-        return new ComponentSidebarLayout(title, lines);
+        SidebarComponent.Builder lineBuilder = SidebarComponent.builder();
+        for (String line : Settings.getScoreboardLines()) {
+            lineBuilder.addDynamicLine(() -> parseMessage(line, player));
+        }
+        return new ComponentSidebarLayout(title, lineBuilder.build());
     }
 
     public void addParticipantAndInitiateScoreboard(UUID playerUUID) {
@@ -149,9 +143,11 @@ public class Raid {
             return;
         }
         Sidebar sidebar = plugin.getScoreboardLibrary().createSidebar();
-        sidebar.addPlayer(player);
+        if (Settings.isScoreboardEnabled())
+            sidebar.addPlayer(player);
         participantsTable.put(playerUUID, 0, sidebar);
-        generateScoreboardLayout(player).apply(sidebar);
+        if (Settings.isScoreboardEnabled())
+            generateScoreboardLayout(player).apply(sidebar);
         participantsTable.put(playerUUID, 0, sidebar);
     }
 
@@ -307,7 +303,8 @@ public class Raid {
     public void onRaidTimer() {
         secondsLeft--;
         updateParticipants();
-        updateScoreboards();
+        if (Settings.isScoreboardEnabled())
+            updateScoreboards();
         cleanStoredMobs();
 
         // check for win
@@ -574,6 +571,7 @@ public class Raid {
             .parseMinimessagePlaceholder("raid_total_kills", String.valueOf(getTotalKills()))
             .parseMinimessagePlaceholder("raid_boss_name", preset.getBoss())
             .parseMinimessagePlaceholder("raid_participants_total_deaths", String.valueOf(playerDeaths))
+            .parseMinimessagePlaceholder("raid_scoreboard_border", Settings.getScoreboardBorder())
             .build();
     }
 
@@ -591,6 +589,7 @@ public class Raid {
             .parseMinimessagePlaceholder("raid_participant_kills", String.valueOf(getKills(participant.getUniqueId())))
             .parseMinimessagePlaceholder("raid_boss_name", preset.getBoss())
             .parseMinimessagePlaceholder("raid_participants_total_deaths", String.valueOf(playerDeaths))
+            .parseMinimessagePlaceholder("raid_scoreboard_border", Settings.getScoreboardBorder())
             .parsePAPIPlaceholders(participant)
             .build();
     }
@@ -601,7 +600,8 @@ public class Raid {
         raidTimer.cancel();
         spawnMobsTimer.cancel();
         clearSpawnedMobs();
-        removeScoreboards();
+        if (Settings.isScoreboardEnabled())
+            removeScoreboards();
         RaidManager.deRegisterRaid(this);
     }
 

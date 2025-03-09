@@ -107,6 +107,24 @@ public class Settings {
         return raidTiers;
     }
 
+    public static boolean isScoreboardEnabled() {
+        return Cfg.get().getOrDefault("Scoreboard.enabled", false);
+    }
+
+    public static String getScoreboardTitle() {
+        return Cfg.get().getString("Scoreboard.title");
+    }
+
+    public static String getScoreboardBorder() {
+        return Cfg.get().getString("Scoreboard.border");
+    }
+
+    public static List<String> getScoreboardLines() {
+        @SuppressWarnings("unchecked")
+        List<String> scoreboardLines = (List<String>) Cfg.get().getList("Scoreboard.lines");
+        return scoreboardLines;
+    }
+
     public static boolean areTitleMessagesEnabled() {
         return Cfg.get().getOrDefault("TitleMessages.enabled", false);
     }

@@ -72,6 +72,19 @@ RaidTiers:
     mobSpawnsPerCycle: 2
     cycleRate: 1.0
 
+Scoreboard:
+  enabled: true
+  title: "<dark_red><bold> Tier <raid_tier> Raid - <raid_area_name>"
+  border: "-------------------------"
+  lines:
+    - "<dark_red><bold><raid_scoreboard_border>"
+    - "<gold>Time Left: <raid_time_left>"
+    - "<gold>Kills Goal: <raid_kills_goal>"
+    - "<gold>Total Kills: <raid_total_kills>"
+    - "<gold>Total Player Deaths: <raid_participants_total_deaths>"
+    - "<dark_red><bold><raid_scoreboard_border>"
+    - "<gold>Your Kills: <raid_participant_kills>"
+
 TitleMessages:
   enabled: true
   raidStartTitle: "<dark_red><bold>Tier <raid_tier> Raid Inbound"
