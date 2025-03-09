@@ -15,6 +15,7 @@ import io.github.alathra.raidsperregion.raid.preset.RaidPresetManager;
 import io.github.alathra.raidsperregion.raid.tier.RaidTier;
 import io.github.alathra.raidsperregion.raid.tier.RaidTierManager;
 import io.github.milkdrinkers.colorparser.ColorParser;
+import org.apache.logging.log4j.util.Strings;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -26,13 +27,23 @@ public class RaidCommand {
             .withFullDescription("RaidsPerRegion raid commands")
             .withShortDescription("RaidsPerRegion raid commands")
             .withSubcommands(
-                startCommand()
+                startCommand(),
+                stopCommand(),
+                listCommand()
             )
             .executes(this::helpCommand)
             .register();
     }
 
+    private void helpMsg(CommandSender sender) {
+        sender.sendMessage("[-----RaidsPerRegion4 Help Menu----]");
+        sender.sendMessage(ColorParser.of("Start a raid: <yellow>/raid start [type] [world] [area] <preset> <tier>").build());
+        sender.sendMessage(ColorParser.of("Cancel a raid: <yellow>/raid stop [raid]").build());
+        sender.sendMessage(ColorParser.of("View active raids: <yellow>/raid list").build());
+    }
+
     private void helpCommand(CommandSender sender, CommandArguments args) {
+        helpMsg(sender);
     }
 
     public CommandAPICommand startCommand() {
@@ -83,11 +94,35 @@ public class RaidCommand {
                     throw CommandAPIBukkit.failWithAdventureComponent(ColorParser.of("<red>Invalid raid tier argument").build());
 
                 Raid raid = new Raid(sender, world, raidArea, raidPreset, raidTier);
-                if(RaidManager.registerRaid(raid)) {
+                if (RaidManager.registerRaid(raid)) {
                     raid.start();
+                    sender.sendMessage(raid.parseMessage("<green>You have started a tier <raid_tier> raid on <raid_area_name>"));
                 }
+            });
+    }
 
-                sender.sendMessage(raid.parseMessage("<green>You have started a tier <raid_tier> raid on <raid_area_name>"));
+    public CommandAPICommand stopCommand() {
+        return new CommandAPICommand("stop")
+            .withPermission(RaidsPerRegion.getAdminPermission())
+            .withArguments(
+                CommandUtil.raidArgument("raid")
+            )
+            .executes((CommandSender sender, CommandArguments args) -> {
+                final Raid raid = (Raid) args.get("area");
+                if (raid == null)
+                    throw CommandAPIBukkit.failWithAdventureComponent(ColorParser.of("<red>Invalid raid argument").build());
+
+                sender.sendMessage(raid.parseMessage("<green>You have stopped a tier <raid_tier> raid on <raid_area_name>"));
+                raid.cancel();
+            });
+    }
+
+    public CommandAPICommand listCommand() {
+        return new CommandAPICommand("list")
+            .withPermission(RaidsPerRegion.getAdminPermission())
+            .executes((CommandSender sender, CommandArguments args) -> {
+                String raidsString = Strings.join(RaidManager.getRaids().stream().map(raid -> raid.getArea().getName()).toList(), ',');
+                sender.sendMessage(ColorParser.of("<yellow>Active Raids: " + raidsString).build());
             });
     }
 

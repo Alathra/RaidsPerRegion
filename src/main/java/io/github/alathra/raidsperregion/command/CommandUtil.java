@@ -12,6 +12,8 @@ import dev.jorel.commandapi.arguments.ArgumentSuggestions;
 import dev.jorel.commandapi.arguments.CustomArgument;
 import dev.jorel.commandapi.arguments.StringArgument;
 import io.github.alathra.raidsperregion.hook.Hook;
+import io.github.alathra.raidsperregion.raid.Raid;
+import io.github.alathra.raidsperregion.raid.RaidManager;
 import io.github.alathra.raidsperregion.raid.area.RaidArea;
 import io.github.alathra.raidsperregion.raid.area.RegionRaidArea;
 import io.github.alathra.raidsperregion.raid.area.TownRaidArea;
@@ -23,6 +25,7 @@ import io.github.milkdrinkers.colorparser.ColorParser;
 import org.bukkit.World;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CommandUtil {
 
@@ -116,6 +119,18 @@ public class CommandUtil {
             RaidTierManager.refreshTiers();
             return RaidTierManager.getTiers().stream().map(RaidTier::getName).toList();
         }));
+    }
+
+    public static Argument<Raid> raidArgument(String nodeName) {
+        return new CustomArgument<Raid, String>(new StringArgument(nodeName), info -> {
+            final String argRaidName = info.input().toLowerCase();
+            for (Raid raid : RaidManager.getRaids()) {
+                if (argRaidName.equalsIgnoreCase(raid.getArea().getName())) {
+                    return raid;
+                }
+            }
+            throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid raid argument").build());
+        }).replaceSuggestions(ArgumentSuggestions.stringCollection(info -> RaidManager.getRaids().stream().map(raid -> raid.getArea().getName()).collect(Collectors.toList())));
     }
 
 }
