@@ -4,7 +4,6 @@ import io.github.alathra.raidsperregion.hook.HookManager;
 import io.github.alathra.raidsperregion.command.CommandHandler;
 import io.github.alathra.raidsperregion.config.ConfigHandler;
 import io.github.alathra.raidsperregion.listener.ListenerHandler;
-import io.github.alathra.raidsperregion.updatechecker.UpdateHandler;
 
 import io.github.alathra.raidsperregion.utility.Logger;
 import io.github.alathra.raidsperregion.utility.MythicMobsUtil;
@@ -29,7 +28,6 @@ public class RaidsPerRegion extends JavaPlugin {
     private HookManager hookManager;
     private CommandHandler commandHandler;
     private ListenerHandler listenerHandler;
-    private UpdateHandler updateHandler;
 
     // Handlers list (defines order of load/enable/disable)
     private List<? extends Reloadable> handlers;
@@ -46,14 +44,12 @@ public class RaidsPerRegion extends JavaPlugin {
         hookManager = new HookManager(this);
         commandHandler = new CommandHandler(this);
         listenerHandler = new ListenerHandler(this);
-        updateHandler = new UpdateHandler(this);
 
         handlers = List.of(
             configHandler,
             hookManager,
             commandHandler,
-            listenerHandler,
-            updateHandler
+            listenerHandler
         );
 
         for (Reloadable handler : handlers)
@@ -102,11 +98,6 @@ public class RaidsPerRegion extends JavaPlugin {
     @NotNull
     public HookManager getHookManager() {
         return hookManager;
-    }
-
-    @NotNull
-    public UpdateHandler getUpdateHandler() {
-        return updateHandler;
     }
 
     @NotNull

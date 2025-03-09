@@ -9,6 +9,7 @@ import io.github.alathra.raidsperregion.raid.tier.RaidTierBuilder;
 import io.github.alathra.raidsperregion.utility.Cfg;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -19,27 +20,27 @@ public class Settings {
     }
 
     public static boolean forceMobSpawningInRegionOnRaidStart() {
-        return Cfg.get().getOrDefault("GlobalSettings.ForceMobSpawningInRegionOnRaidStart", true);
+        return Cfg.get().getOrDefault("GlobalRaidSettings.ForceMobSpawningInRegionOnRaidStart", true);
     }
 
     public static boolean keepInventoryOnPlayerDeath() {
-        return Cfg.get().getOrDefault("GlobalSettings.KeepInventoryOnPlayerDeath", false);
+        return Cfg.get().getOrDefault("GlobalRaidSettings.KeepInventoryOnPlayerDeath", false);
     }
 
     public static boolean keepEXPOnPlayerDeath() {
-        return Cfg.get().getOrDefault("GlobalSettings.KeepEXPOnPlayerDeath", false);
+        return Cfg.get().getOrDefault("GlobalRaidSettings.KeepEXPOnPlayerDeath", false);
     }
 
     public static boolean disablePvPInRaids() {
-        return Cfg.get().getOrDefault("GlobalSettings.DisablePvPInRaids", false);
+        return Cfg.get().getOrDefault("GlobalRaidSettings.DisablePvPInRaids", false);
     }
 
     public static boolean clearMobsOnRaidLoss() {
-        return Cfg.get().getOrDefault("GlobalSettings.ClearMobsOnRaidLoss", false);
+        return Cfg.get().getOrDefault("GlobalRaidSettings.ClearMobsOnRaidLoss", false);
     }
 
     public static boolean arePlayerDeathMessagesShownInRaids() {
-        return Cfg.get().getOrDefault("GlobalSettings.ShowPlayerDeathMessagesInRaids", true);
+        return Cfg.get().getOrDefault("GlobalRaidSettings.ShowPlayerDeathMessagesInRaids", true);
     }
 
     public static List<RaidPreset> getRaidPresets() {
@@ -84,13 +85,13 @@ public class Settings {
         Map<?, ?> raidTiersMap = Cfg.get().getMap("RaidTiers");
         for (Map.Entry<?, ?> tierEntry : raidTiersMap.entrySet()) {
             final String name = tierEntry.getKey().toString();
-            final String baseKey = "RaidTiers." + name + ".";
-            final boolean isDefault = Cfg.get().getBoolean(baseKey + "default");
-            final int maxMobsAtOnce = Cfg.get().getInt(baseKey + "maxMobsAtOnce");
-            final int killsGoal = Cfg.get().getInt(baseKey + "killsGoal");
-            final int timeLimit = Cfg.get().getInt(baseKey + "timeLimit");
-            final int mobSpawnsPerCycle = Cfg.get().getInt(baseKey + "mobSpawnsPerCycle");
-            final double cycleRate = Cfg.get().getDouble(baseKey + "cycleRate");
+            LinkedHashMap<?, ?> specificTierMap = (LinkedHashMap<?, ?>) tierEntry.getValue();
+            final boolean isDefault = (boolean) specificTierMap.get("default");
+            final int maxMobsAtOnce = (int) specificTierMap.get("maxMobsAtOnce");
+            final int killsGoal = (int) specificTierMap.get("killsGoal");
+            final int timeLimit = (int) specificTierMap.get("timeLimit");
+            final int mobSpawnsPerCycle = (int) specificTierMap.get("mobSpawnsPerCycle");
+            final double cycleRate = (double) specificTierMap.get("cycleRate");
             raidTiers.add(
                 new RaidTierBuilder()
                     .setName(name)

@@ -26,6 +26,10 @@ public class MobSpawnListener implements Listener {
             return;
         }
 
+        if (RaidManager.getRaids().isEmpty()) {
+            return;
+        }
+
         // clear any non-raid mobs that spawn
         Entity entity = e.getEntity();
         Location spawnLocation = e.getLocation();

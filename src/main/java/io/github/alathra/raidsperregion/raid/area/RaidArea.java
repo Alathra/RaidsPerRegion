@@ -40,6 +40,10 @@ public abstract class RaidArea {
         return base;
     }
 
+    public boolean wasMobSpawningEnabledBeforeRaid() {
+        return wasMobSpawningEnabledBeforeRaid;
+    }
+
     public Set<UUID> findPlayersInArea() {
         Set<UUID> playerUUIDs = new HashSet<>();
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -53,7 +57,7 @@ public abstract class RaidArea {
     public static Set<String> getTypes() {
         Set<String> raidTypes = new HashSet<>();
         raidTypes.add("region");
-        if(Hook.getTownyHook().isHookLoaded()) {
+        if(Hook.Towny.isLoaded()) {
             raidTypes.add("town");
         }
         return raidTypes;

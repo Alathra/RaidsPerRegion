@@ -22,6 +22,7 @@ import io.github.alathra.raidsperregion.raid.preset.RaidPresetManager;
 import io.github.alathra.raidsperregion.raid.tier.RaidTier;
 import io.github.alathra.raidsperregion.raid.tier.RaidTierManager;
 import io.github.milkdrinkers.colorparser.ColorParser;
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 
 import java.util.*;
@@ -131,6 +132,28 @@ public class CommandUtil {
             }
             throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid raid argument").build());
         }).replaceSuggestions(ArgumentSuggestions.stringCollection(info -> RaidManager.getRaids().stream().map(raid -> raid.getArea().getName()).collect(Collectors.toList())));
+    }
+
+    public static Argument<World> worldArgument(String nodeName) {
+        return new CustomArgument<World, String>(new StringArgument(nodeName), info -> {
+            final String argWorldName = info.input();
+            for (World world : Bukkit.getWorlds()) {
+                if (argWorldName.equalsIgnoreCase(world.getName())) {
+                    return world;
+                }
+            }
+            throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid world argument").build());
+        }).replaceSuggestions(ArgumentSuggestions.strings(Bukkit.getWorlds().stream().map(World::getName).toList()));
+    }
+
+    public static Argument<String> raidTypeArgument(String nodeName) {
+        return new CustomArgument<String, String>(new StringArgument(nodeName), info -> {
+            final String argTypeName = info.input().toLowerCase();
+            if (!RaidArea.getTypes().contains(argTypeName)) {
+                throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid raid type argument").build());
+            }
+            return argTypeName;
+        }).replaceSuggestions(ArgumentSuggestions.strings(RaidArea.getTypes()));
     }
 
 }

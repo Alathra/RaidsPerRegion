@@ -133,9 +133,7 @@ tasks {
         reloc("io.github.milkdrinkers.versionwatch", "versionwatch")
         reloc("dev.jorel.commandapi", "commandapi")
         reloc("dev.triumphteam.gui", "gui")
-        reloc("fr.mrmicky.fastboard", "fastboard")
-
-        minimize()
+        reloc("net.megavex.scoreboardlibrary", "scoreboardlibrary")
     }
 
     test {

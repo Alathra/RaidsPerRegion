@@ -12,6 +12,7 @@ import io.github.alathra.raidsperregion.raid.tier.RaidTier;
 import io.github.alathra.raidsperregion.utility.Logger;
 import io.github.alathra.raidsperregion.utility.MythicMobsUtil;
 import io.github.alathra.raidsperregion.utility.RandomUtil;
+import io.github.alathra.raidsperregion.utility.StringUtil;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
@@ -56,6 +57,8 @@ public class Raid {
     private boolean isBossSpawned;
     // If the boss entity has been killed
     private boolean isBossKilled;
+    // Amount of player deaths in the raid
+    private int playerDeaths;
 
     // -- TASKS --
     private BukkitTask spawnMobsTimer;
@@ -125,13 +128,17 @@ public class Raid {
     }
 
     public ComponentSidebarLayout generateScoreboardLayout(OfflinePlayer player) {
-        SidebarComponent title = SidebarComponent.staticLine(parseMessage("<dark_red><bold> Tier <raid_tier> Raid - <raid_area>", player));
+        Component titleComponent = parseMessage("<dark_red><bold> Tier <raid_tier> Raid - <raid_area_name>", player);
+        Component borderComponent = ColorParser.of("<dark_red><bold>" + StringUtil.generateRepeatingCharString(StringUtil.getNumCharsInComponent(titleComponent), '-')).build();
+        SidebarComponent title = SidebarComponent.staticLine(titleComponent);
         SidebarComponent lines = SidebarComponent.builder()
-            .addStaticLine(ColorParser.of("<dark_red><bold>----------------").build())
-            .addDynamicLine(() -> parseMessage("<gold>Time Left: <raid_time_left>"))
-            .addDynamicLine(() -> parseMessage("<gold>Kills Goal: <raid_kills_goal>"))
-            .addDynamicLine(() -> parseMessage("<gold>Kills Goal: <raid_total_kills>"))
-            .addStaticLine(ColorParser.of("<dark_red><bold>----------------").build())
+            .addStaticLine(borderComponent)
+            .addDynamicLine(() -> parseMessage("<gold>Time Left: <raid_time_left>", player))
+            .addDynamicLine(() -> parseMessage("<gold>Kills Goal: <raid_kills_goal>", player))
+            .addDynamicLine(() -> parseMessage("<gold>Total Kills: <raid_total_kills>", player))
+            .addDynamicLine(() -> parseMessage("<gold>Total Player Deaths: <raid_participants_total_deaths>", player))
+            .addStaticLine(borderComponent)
+            .addDynamicLine(() -> parseMessage("<gold>Your Kills: <raid_participant_kills>", player))
             .build();
         return new ComponentSidebarLayout(title, lines);
     }
@@ -141,9 +148,9 @@ public class Raid {
         if (player == null) {
             return;
         }
-        participantsTable.put(playerUUID, 0, null);
         Sidebar sidebar = plugin.getScoreboardLibrary().createSidebar();
         sidebar.addPlayer(player);
+        participantsTable.put(playerUUID, 0, sidebar);
         generateScoreboardLayout(player).apply(sidebar);
         participantsTable.put(playerUUID, 0, sidebar);
     }
@@ -267,9 +274,18 @@ public class Raid {
     }
 
     public void start() {
-        if (!RaidManager.registerRaid(this)) {
-            Logger.get().warn("Failed to start new raid because a raid already exists in this area");
+        // Impossible to spawn mobs because unable to force mob spawning in area
+        if (!Settings.forceMobSpawningInRegionOnRaidStart() && area.wasMobSpawningEnabledBeforeRaid()) {
+            Logger.get().warn("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name>");
+            starter.sendMessage(parseMessage("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name>"));
+            return;
         }
+        if (!RaidManager.registerRaid(this)) {
+            Logger.get().warn("<red>Failed to start raid: There is already an ongoing raid in <raid_area_name>");
+            starter.sendMessage(parseMessage("<red>Failed to start raid: There is already an ongoing raid in <raid_area_name>"));
+        }
+        Logger.get().info(parseMessage("<green>You have started a tier <raid_tier> raid on <raid_area_name>"));
+        starter.sendMessage(parseMessage("<green>You have started a tier <raid_tier> raid on <raid_area_name>"));
 
         // see if mob spawning is allowed in region, and force it on if necessary
         if (Settings.forceMobSpawningInRegionOnRaidStart())
@@ -558,30 +574,32 @@ public class Raid {
     public Component parseMessage(String raw) {
         return ColorParser.of(raw)
             .parseLegacy()
-            .parseMinimessagePlaceholder("<raid_tier>", tier.getName())
-            .parseMinimessagePlaceholder("<raid_area_name>", area.getName())
-            .parseMinimessagePlaceholder("<raid_area_type>", area.getName())
-            .parseMinimessagePlaceholder("<raid_starter>", starter.getName())
-            .parseMinimessagePlaceholder("<raid_time_left>", getFormattedTimeLeft())
-            .parseMinimessagePlaceholder("<raid_kills_goal>", String.valueOf(tier.getKillsGoal()))
-            .parseMinimessagePlaceholder("<raid_total_kills>", String.valueOf(getTotalKills()))
-            .parseMinimessagePlaceholder("<raid_boss_name>", preset.getBoss())
+            .parseMinimessagePlaceholder("raid_tier", tier.getName())
+            .parseMinimessagePlaceholder("raid_area_name", area.getName())
+            .parseMinimessagePlaceholder("raid_area_type", area.getName())
+            .parseMinimessagePlaceholder("raid_starter", starter.getName())
+            .parseMinimessagePlaceholder("raid_time_left", getFormattedTimeLeft())
+            .parseMinimessagePlaceholder("raid_kills_goal", String.valueOf(tier.getKillsGoal()))
+            .parseMinimessagePlaceholder("raid_total_kills", String.valueOf(getTotalKills()))
+            .parseMinimessagePlaceholder("raid_boss_name", preset.getBoss())
+            .parseMinimessagePlaceholder("raid_participants_total_deaths", String.valueOf(playerDeaths))
             .build();
     }
 
     public Component parseMessage(String raw, OfflinePlayer participant) {
         return ColorParser.of(raw)
             .parseLegacy()
-            .parseMinimessagePlaceholder("<raid_tier>", tier.getName())
-            .parseMinimessagePlaceholder("<raid_area_name>", area.getName())
-            .parseMinimessagePlaceholder("<raid_area_type>", area.getName())
-            .parseMinimessagePlaceholder("<raid_starter>", starter.getName())
-            .parseMinimessagePlaceholder("<raid_time_left>", getFormattedTimeLeft())
-            .parseMinimessagePlaceholder("<raid_kills_goal>", String.valueOf(tier.getKillsGoal()))
-            .parseMinimessagePlaceholder("<raid_total_kills>", String.valueOf(getTotalKills()))
-            .parseMinimessagePlaceholder("<raid_participant_name>", participant.getName())
-            .parseMinimessagePlaceholder("<raid_participant_kills>", String.valueOf(getKills(participant.getUniqueId())))
-            .parseMinimessagePlaceholder("<raid_boss_name>", preset.getBoss())
+            .parseMinimessagePlaceholder("raid_tier", tier.getName())
+            .parseMinimessagePlaceholder("raid_area_name", area.getName())
+            .parseMinimessagePlaceholder("raid_area_type", area.getName())
+            .parseMinimessagePlaceholder("raid_starter", starter.getName())
+            .parseMinimessagePlaceholder("raid_time_left", getFormattedTimeLeft())
+            .parseMinimessagePlaceholder("raid_kills_goal", String.valueOf(tier.getKillsGoal()))
+            .parseMinimessagePlaceholder("raid_total_kills", String.valueOf(getTotalKills()))
+            .parseMinimessagePlaceholder("raid_participant_name", participant.getName())
+            .parseMinimessagePlaceholder("raid_participant_kills", String.valueOf(getKills(participant.getUniqueId())))
+            .parseMinimessagePlaceholder("raid_boss_name", preset.getBoss())
+            .parseMinimessagePlaceholder("raid_participants_total_deaths", String.valueOf(playerDeaths))
             .parsePAPIPlaceholders(participant)
             .build();
     }
@@ -638,6 +656,10 @@ public class Raid {
 
     public void setBossKilled(boolean isBossKilled) {
         this.isBossKilled = isBossKilled;
+    }
+
+    public void addPlayerDeath() {
+        playerDeaths++;
     }
 
 }

@@ -15,16 +15,16 @@ public class PlayerDeathListener implements Listener {
     public void onPlayerDeath(PlayerDeathEvent e) {
         Player player = e.getPlayer();
 
-        if (Settings.keepInventoryOnPlayerDeath() || Settings.keepEXPOnPlayerDeath()) {
-            for (Raid raid : RaidManager.getRaids()) {
-                if (raid.getActiveParticipants().contains(player.getUniqueId())) {
-                    if(Settings.keepInventoryOnPlayerDeath())
-                        e.setKeepInventory(true);
-                    if(Settings.keepEXPOnPlayerDeath())
-                        e.setKeepLevel(true);
-                }
+        for (Raid raid : RaidManager.getRaids()) {
+            if (raid.getActiveParticipants().contains(player.getUniqueId())) {
+                if (Settings.keepInventoryOnPlayerDeath())
+                    e.setKeepInventory(true);
+                if (Settings.keepEXPOnPlayerDeath())
+                    e.setKeepLevel(true);
+                if (!Settings.arePlayerDeathMessagesShownInRaids())
+                    e.deathMessage(null);
+                raid.addPlayerDeath();
             }
         }
-
     }
 }

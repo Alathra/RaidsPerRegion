@@ -6,7 +6,7 @@ import io.github.alathra.raidsperregion.hook.Hook;
 
 public class TownyHook extends AbstractHook {
 
-    protected TownyHook(RaidsPerRegion plugin) {
+    public TownyHook(RaidsPerRegion plugin) {
         super(plugin);
     }
 

@@ -1,10 +1,13 @@
 package io.github.alathra.raidsperregion.raid;
 
+import io.github.alathra.raidsperregion.config.Settings;
+
+import java.util.HashSet;
 import java.util.Set;
 
 public class RaidManager {
 
-    private static Set<Raid> raids;
+    private static final Set<Raid> raids = new HashSet<>();
 
     public static boolean registerRaid(Raid newRaid) {
         // You can't have two raids in the same area
@@ -19,7 +22,6 @@ public class RaidManager {
     }
 
     public static void deRegisterRaid(Raid newRaid) {
-        newRaid = null;
         raids.remove(newRaid);
     }
 

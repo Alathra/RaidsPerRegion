@@ -86,8 +86,8 @@ TitleMessages:
   raidWinSubtitle: "<gold>The raiders have fled"
   raidLoseTitle: "<dark_red><bold>Raid Lost!"
   raidLoseSubtitle: "<gold>This can't be good..."
-  raidCancelTitle: "<aqua><bold>Raid Cancelled"
-  raidCancelSubtitle: "<gold>Raid Cancelled by <raid_starter>"
+  raidCancelTitle: "<aqua><bold>Raid Canceled"
+  raidCancelSubtitle: "<gold>Raid canceled by <raid_starter>"
   raidBossSpawnTitle: "<red><bold>Raid Boss Spawned"
   raidBossSpawnSubtitle: "<gold>Kill <raid_boss_name> to win the raid!"
 
