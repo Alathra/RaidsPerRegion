@@ -10,7 +10,7 @@ public class RaidTierManager {
 
     public static List<RaidTier> raidTiers = new ArrayList<>();
 
-    public static void refreshPresets() {
+    public static void refreshTiers() {
         raidTiers.clear();
         Settings.getRaidTiers().forEach(RaidTierManager::registerTier);
     }
@@ -55,5 +55,9 @@ public class RaidTierManager {
             }
         }
         return null;
+    }
+
+    public static List<RaidTier> getTiers() {
+        return raidTiers;
     }
 }

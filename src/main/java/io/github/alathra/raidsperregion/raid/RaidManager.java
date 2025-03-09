@@ -1,7 +1,5 @@
 package io.github.alathra.raidsperregion.raid;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.Set;
 
 public class RaidManager {

@@ -53,4 +53,8 @@ public class RaidPresetManager {
         }
         return null;
     }
+
+    public static List<RaidPreset> getPresets() {
+        return raidPresets;
+    }
 }

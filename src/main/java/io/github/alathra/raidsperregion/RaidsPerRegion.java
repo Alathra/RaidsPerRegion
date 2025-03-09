@@ -22,6 +22,8 @@ public class RaidsPerRegion extends JavaPlugin {
     private static RaidsPerRegion instance;
     private static ScoreboardLibrary scoreboardLibrary;
 
+    private static final String ADMIN_PERMISSION = "raidsperregion.admin";
+
     // Handlers/Managers
     private ConfigHandler configHandler;
     private HookManager hookManager;
@@ -110,5 +112,9 @@ public class RaidsPerRegion extends JavaPlugin {
     @NotNull
     public ScoreboardLibrary getScoreboardLibrary() {
         return scoreboardLibrary;
+    }
+
+    public static String getAdminPermission() {
+        return ADMIN_PERMISSION;
     }
 }

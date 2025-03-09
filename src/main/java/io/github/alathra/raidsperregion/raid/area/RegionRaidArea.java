@@ -3,13 +3,7 @@ package io.github.alathra.raidsperregion.raid.area;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
-
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
 
 public class RegionRaidArea extends RaidArea {
 
@@ -18,6 +12,8 @@ public class RegionRaidArea extends RaidArea {
     public RegionRaidArea(ProtectedRegion base) {
         super(base);
         region = base;
+        setName();
+        setType();
     }
 
     @Override
@@ -57,19 +53,6 @@ public class RegionRaidArea extends RaidArea {
     @Override
     public boolean containsLocation(Location location) {
         return region.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ());
-    }
-
-    @Override
-    public Set<UUID> findPlayersInArea() {
-        Set<UUID> playerUUIDs = new HashSet<>();
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            Location location = player.getLocation();
-
-            if (region.contains(location.getBlockX(), location.getBlockY(), location.getBlockZ())) {
-                playerUUIDs.add(player.getUniqueId());
-            }
-        }
-        return playerUUIDs;
     }
 
     private ProtectedRegion getRegion() {

@@ -63,12 +63,12 @@ public class Raid {
 
     // List of players who participate in a raid (defined as entering the raid region).
     // Integer is the amount of mob kills by the player
-    private Table<UUID, Integer, Sidebar> participantsTable;
+    private final Table<UUID, Integer, Sidebar> participantsTable;
     // Set of players who are actively participating in the raid. Same as
     // participants except when they leave the region they are removed from the list.
-    private Set<UUID> activeParticipants;
+    private final Set<UUID> activeParticipants;
 
-    public Raid(@NotNull CommandSender starter, @NotNull World world, @NotNull RaidPreset preset, @NotNull RaidTier tier, @NotNull RaidArea area) {
+    public Raid(@NotNull CommandSender starter, @NotNull World world, @NotNull RaidArea area, @NotNull RaidPreset preset, @NotNull RaidTier tier) {
         plugin = RaidsPerRegion.getInstance();
         uuid = UUID.randomUUID();
         this.starter = starter;
@@ -247,36 +247,6 @@ public class Raid {
         }
     }
 
-    private Component parseMessage(String raw) {
-        return ColorParser.of(raw)
-            .parseLegacy()
-            .parseMinimessagePlaceholder("<raid_tier>", tier.getName())
-            .parseMinimessagePlaceholder("<raid_area_name>", area.getName())
-            .parseMinimessagePlaceholder("<raid_area_type>", area.getName())
-            .parseMinimessagePlaceholder("<raid_starter>", starter.getName())
-            .parseMinimessagePlaceholder("<raid_time_left>", getFormattedTimeLeft())
-            .parseMinimessagePlaceholder("<raid_kills_goal>", String.valueOf(tier.getKillsGoal()))
-            .parseMinimessagePlaceholder("<raid_total_kills>", String.valueOf(getTotalKills()))
-            .parseMinimessagePlaceholder("<boss_name>", preset.getBoss())
-            .build();
-    }
-
-    private Component parseMessage(String raw, OfflinePlayer participant) {
-        return ColorParser.of(raw)
-            .parseLegacy()
-            .parseMinimessagePlaceholder("<raid_tier>", tier.getName())
-            .parseMinimessagePlaceholder("<raid_area_name>", area.getName())
-            .parseMinimessagePlaceholder("<raid_area_type>", area.getName())
-            .parseMinimessagePlaceholder("<raid_starter>", starter.getName())
-            .parseMinimessagePlaceholder("<raid_time_left>", getFormattedTimeLeft())
-            .parseMinimessagePlaceholder("<raid_kills_goal>", String.valueOf(tier.getKillsGoal()))
-            .parseMinimessagePlaceholder("<raid_total_kills>", String.valueOf(getTotalKills()))
-            .parseMinimessagePlaceholder("<raid_participant_name>", participant.getName())
-            .parseMinimessagePlaceholder("<raid_participant_kills>", String.valueOf(getKills(participant.getUniqueId())))
-            .parseMinimessagePlaceholder("<boss_name>", preset.getBoss())
-            .build();
-    }
-
     public void updateParticipants() {
         Set<UUID> playersInArea = area.findPlayersInArea();
 
@@ -296,7 +266,7 @@ public class Raid {
         activeParticipants.removeIf(playerUUID -> !playersInArea.contains(playerUUID));
     }
 
-    public void startRaid(CommandSender sender, boolean isConsole) {
+    public void start() {
         if (!RaidManager.registerRaid(this)) {
             Logger.get().warn("Failed to start new raid because a raid already exists in this area");
         }
@@ -331,7 +301,7 @@ public class Raid {
         }
     }
 
-    public void cancelRaid() {
+    public void cancel() {
         area.resetMobSpawningToDefault();
         raidTimer.cancel();
         spawnMobsTimer.cancel();
@@ -581,6 +551,39 @@ public class Raid {
             return;
         }
 
+    }
+
+    // Private methods
+
+    public Component parseMessage(String raw) {
+        return ColorParser.of(raw)
+            .parseLegacy()
+            .parseMinimessagePlaceholder("<raid_tier>", tier.getName())
+            .parseMinimessagePlaceholder("<raid_area_name>", area.getName())
+            .parseMinimessagePlaceholder("<raid_area_type>", area.getName())
+            .parseMinimessagePlaceholder("<raid_starter>", starter.getName())
+            .parseMinimessagePlaceholder("<raid_time_left>", getFormattedTimeLeft())
+            .parseMinimessagePlaceholder("<raid_kills_goal>", String.valueOf(tier.getKillsGoal()))
+            .parseMinimessagePlaceholder("<raid_total_kills>", String.valueOf(getTotalKills()))
+            .parseMinimessagePlaceholder("<raid_boss_name>", preset.getBoss())
+            .build();
+    }
+
+    public Component parseMessage(String raw, OfflinePlayer participant) {
+        return ColorParser.of(raw)
+            .parseLegacy()
+            .parseMinimessagePlaceholder("<raid_tier>", tier.getName())
+            .parseMinimessagePlaceholder("<raid_area_name>", area.getName())
+            .parseMinimessagePlaceholder("<raid_area_type>", area.getName())
+            .parseMinimessagePlaceholder("<raid_starter>", starter.getName())
+            .parseMinimessagePlaceholder("<raid_time_left>", getFormattedTimeLeft())
+            .parseMinimessagePlaceholder("<raid_kills_goal>", String.valueOf(tier.getKillsGoal()))
+            .parseMinimessagePlaceholder("<raid_total_kills>", String.valueOf(getTotalKills()))
+            .parseMinimessagePlaceholder("<raid_participant_name>", participant.getName())
+            .parseMinimessagePlaceholder("<raid_participant_kills>", String.valueOf(getKills(participant.getUniqueId())))
+            .parseMinimessagePlaceholder("<raid_boss_name>", preset.getBoss())
+            .parsePAPIPlaceholders(participant)
+            .build();
     }
 
     // Getters and Setters

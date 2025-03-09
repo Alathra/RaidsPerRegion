@@ -89,7 +89,7 @@ TitleMessages:
   raidCancelTitle: "<aqua><bold>Raid Cancelled"
   raidCancelSubtitle: "<gold>Raid Cancelled by <raid_starter>"
   raidBossSpawnTitle: "<red><bold>Raid Boss Spawned"
-  raidBossSpawnSubtitle: "<gold>Kill <boss_name> to win the raid!"
+  raidBossSpawnSubtitle: "<gold>Kill <raid_boss_name> to win the raid!"
 
 RaidResultConsoleCommands:
   enabled: true
