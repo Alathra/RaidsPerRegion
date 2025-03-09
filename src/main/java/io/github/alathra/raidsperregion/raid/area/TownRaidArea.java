@@ -1,7 +1,12 @@
 package io.github.alathra.raidsperregion.raid.area;
 
+import com.palmergames.bukkit.towny.event.town.toggle.TownToggleMobsEvent;
+import com.palmergames.bukkit.towny.exceptions.CancelledEventException;
 import com.palmergames.bukkit.towny.object.Town;
+import com.palmergames.bukkit.towny.object.TownBlock;
 import com.palmergames.bukkit.towny.object.WorldCoord;
+import com.palmergames.bukkit.util.BukkitTools;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 public class TownRaidArea extends RaidArea {
@@ -26,24 +31,56 @@ public class TownRaidArea extends RaidArea {
     }
 
     @Override
-    public void forceMobSpawning() {
+    public boolean forceMobSpawning() {
         if (!town.hasMobs()) {
-            town.setHasMobs(true);
-            town.saveTownBlocks();
-            town.save();
-            super.wasMobSpawningEnabledBeforeRaid = false;
+            try {
+                // Fire cancellable event directly before setting the toggle.
+                TownToggleMobsEvent preEvent = new TownToggleMobsEvent(Bukkit.getConsoleSender(), town, true, true);
+                BukkitTools.ifCancelledThenThrow(preEvent);
+                // Set the toggle setting.
+                town.setHasMobs(preEvent.getFutureState());
+                // Propagate perms to all unchanged, town owned, townblocks because it is a
+                // townblock-affecting toggle.
+                for (TownBlock townBlock : town.getTownBlocks()) {
+                    if (!townBlock.hasResident() && !townBlock.isChanged()) {
+                        townBlock.setType(townBlock.getType());
+                        townBlock.save();
+                    }
+                }
+                super.wasMobSpawningEnabledBeforeRaid = false;
+                return true;
+            } catch (CancelledEventException e) {
+                return false;
+            }
         } else {
             super.wasMobSpawningEnabledBeforeRaid = true;
         }
+        return true;
     }
 
     @Override
-    public void resetMobSpawningToDefault() {
+    public boolean resetMobSpawningToDefault() {
         if (!super.wasMobSpawningEnabledBeforeRaid) {
-            town.setHasMobs(false);
-            town.saveTownBlocks();
-            town.save();
+            try {
+                // Fire cancellable event directly before setting the toggle.
+                TownToggleMobsEvent preEvent = new TownToggleMobsEvent(Bukkit.getConsoleSender(), town, true, false);
+                BukkitTools.ifCancelledThenThrow(preEvent);
+                // Set the toggle setting.
+                town.setHasMobs(preEvent.getFutureState());
+                // Propagate perms to all unchanged, town owned, townblocks because it is a
+                // townblock-affecting toggle.
+                for (TownBlock townBlock : town.getTownBlocks()) {
+                    if (!townBlock.hasResident() && !townBlock.isChanged()) {
+                        townBlock.setType(townBlock.getType());
+                        townBlock.save();
+                    }
+                }
+                return true;
+            } catch (CancelledEventException e) {
+                return false;
+            }
         }
+        return true;
     }
 
     @Override

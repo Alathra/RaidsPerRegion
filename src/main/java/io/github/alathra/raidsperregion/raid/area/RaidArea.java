@@ -1,5 +1,6 @@
 package io.github.alathra.raidsperregion.raid.area;
 
+import io.github.alathra.raidsperregion.RaidsPerRegion;
 import io.github.alathra.raidsperregion.hook.Hook;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -10,6 +11,9 @@ import java.util.Set;
 import java.util.UUID;
 
 public abstract class RaidArea {
+
+    public static Set<String> types = new HashSet<>();
+
     protected String name;
     protected String type;
     protected final Object base;
@@ -23,8 +27,8 @@ public abstract class RaidArea {
     protected abstract void setName();
     protected abstract void setType();
 
-    public abstract void forceMobSpawning();
-    public abstract void resetMobSpawningToDefault();
+    public abstract boolean forceMobSpawning();
+    public abstract boolean resetMobSpawningToDefault();
     public abstract boolean containsLocation(Location location);
 
 
@@ -54,13 +58,17 @@ public abstract class RaidArea {
         return playerUUIDs;
     }
 
+    public static void setTypes() {
+        types.add("region");
+        Bukkit.getScheduler().runTaskLater(RaidsPerRegion.getInstance(), () -> {
+            if (Hook.Towny.isLoaded()) {
+                types.add("town");
+            }
+        }, 1L);
+    }
+
     public static Set<String> getTypes() {
-        Set<String> raidTypes = new HashSet<>();
-        raidTypes.add("region");
-        if(Hook.Towny.isLoaded()) {
-            raidTypes.add("town");
-        }
-        return raidTypes;
+        return types;
     }
 
 }

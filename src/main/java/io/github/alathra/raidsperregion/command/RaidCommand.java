@@ -2,8 +2,6 @@ package io.github.alathra.raidsperregion.command;
 
 import dev.jorel.commandapi.CommandAPIBukkit;
 import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.StringArgument;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.alathra.raidsperregion.RaidsPerRegion;
 import io.github.alathra.raidsperregion.raid.Raid;
@@ -77,6 +75,7 @@ public class RaidCommand {
 
                 final RaidArea raidArea = (RaidArea) args.get("area");
 
+                RaidPresetManager.refreshPresets();
                 RaidPreset raidPreset = RaidPresetManager.getDefinedDefaultOrNull();
                 if (raidPreset == null) {
                     RaidPresetManager.getPresets().getFirst();
@@ -85,6 +84,7 @@ public class RaidCommand {
                     raidPreset = (RaidPreset) args.get("preset");
                 }
 
+                RaidTierManager.refreshTiers();
                 RaidTier raidTier = RaidTierManager.getDefinedDefaultOrNull();
                 if (raidTier == null) {
                     RaidTierManager.getTiers().getFirst();
@@ -123,7 +123,7 @@ public class RaidCommand {
                     throw CommandAPIBukkit.failWithAdventureComponent(ColorParser.of("<red>Invalid raid argument").build());
 
                 sender.sendMessage(ColorParser.of("<yellow>You have stopped a raid at " + raid.getArea().getName()).build());
-                raid.cancel();
+                raid.stop();
             });
     }
 

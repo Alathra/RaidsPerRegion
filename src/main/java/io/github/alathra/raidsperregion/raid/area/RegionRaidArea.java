@@ -27,7 +27,7 @@ public class RegionRaidArea extends RaidArea {
     }
 
     @Override
-    public void forceMobSpawning() {
+    public boolean forceMobSpawning() {
         if (region.getFlag(Flags.MOB_SPAWNING) != null) {
             if (region.getFlag(Flags.MOB_SPAWNING).equals(StateFlag.State.ALLOW)) {
                 super.wasMobSpawningEnabledBeforeRaid = true;
@@ -41,13 +41,15 @@ public class RegionRaidArea extends RaidArea {
             super.wasMobSpawningEnabledBeforeRaid = true;
             region.setFlag(Flags.MOB_SPAWNING, StateFlag.State.ALLOW);
         }
+        return true;
     }
 
     @Override
-    public void resetMobSpawningToDefault() {
+    public boolean resetMobSpawningToDefault() {
         if (!super.wasMobSpawningEnabledBeforeRaid) {
             region.setFlag(Flags.MOB_SPAWNING, StateFlag.State.DENY);
         }
+        return true;
     }
 
     @Override

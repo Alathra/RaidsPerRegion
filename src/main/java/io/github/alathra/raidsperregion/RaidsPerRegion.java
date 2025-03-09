@@ -5,6 +5,7 @@ import io.github.alathra.raidsperregion.command.CommandHandler;
 import io.github.alathra.raidsperregion.config.ConfigHandler;
 import io.github.alathra.raidsperregion.listener.ListenerHandler;
 
+import io.github.alathra.raidsperregion.raid.area.RaidArea;
 import io.github.alathra.raidsperregion.utility.Logger;
 import io.github.alathra.raidsperregion.utility.MythicMobsUtil;
 import net.megavex.scoreboardlibrary.api.ScoreboardLibrary;
@@ -72,6 +73,9 @@ public class RaidsPerRegion extends JavaPlugin {
 
         // Initialize MythicMobsUtil
         MythicMobsUtil.init();
+
+        // Set raid types
+        RaidArea.setTypes();
 
     }
 

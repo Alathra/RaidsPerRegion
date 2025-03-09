@@ -276,8 +276,8 @@ public class Raid {
     public void start() {
         // Impossible to spawn mobs because unable to force mob spawning in area
         if (!Settings.forceMobSpawningInRegionOnRaidStart() && area.wasMobSpawningEnabledBeforeRaid()) {
-            Logger.get().warn("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name>");
-            starter.sendMessage(parseMessage("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name>"));
+            Logger.get().warn("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name> due to config setting");
+            starter.sendMessage(parseMessage("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name> due to config setting"));
             return;
         }
         if (!RaidManager.registerRaid(this)) {
@@ -288,8 +288,14 @@ public class Raid {
         starter.sendMessage(parseMessage("<green>You have started a tier <raid_tier> raid on <raid_area_name>"));
 
         // see if mob spawning is allowed in region, and force it on if necessary
-        if (Settings.forceMobSpawningInRegionOnRaidStart())
-            area.forceMobSpawning();
+        if (Settings.forceMobSpawningInRegionOnRaidStart()) {
+            if(!area.forceMobSpawning()) {
+                Logger.get().warn("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name> due to an internal error");
+                starter.sendMessage(parseMessage("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name> due to an internal error"));
+                stop(); // cancel the raid
+                RaidManager.deRegisterRaid(this);
+            }
+        }
 
         raidTimer = plugin.getServer().getScheduler().runTaskTimer(plugin, this::onRaidTimer, 0L, 20L); // Runs instantly, repeats every second
         spawnMobsTimer = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
@@ -317,7 +323,7 @@ public class Raid {
         }
     }
 
-    public void cancel() {
+    public void stop() {
         area.resetMobSpawningToDefault();
         raidTimer.cancel();
         spawnMobsTimer.cancel();
