@@ -1,8 +1,14 @@
 package io.github.alathra.raidsperregion.raid.area;
 
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
 import org.kingdoms.constants.group.Kingdom;
 import org.kingdoms.constants.land.Land;
+import org.kingdoms.main.Kingdoms;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class KingdomRaidArea extends RaidArea {
 
@@ -13,6 +19,14 @@ public class KingdomRaidArea extends RaidArea {
         this.kingdom = kingdom;
         setName();
         setType();
+    }
+
+    public static Set<String> getAllKingdomNames(@NotNull World world) {
+        // Get all kingdoms
+        List<Kingdom> kingdoms = new ArrayList<>(Kingdoms.get().getDataCenter().getKingdomManager().getKingdoms());
+        // Prune all not in selected world
+        kingdoms.removeIf(kingdom -> !kingdom.getNexus().getBukkitWorld().equals(world));
+        return kingdoms.stream().map(Kingdom::getName).collect(Collectors.toSet());
     }
 
     @Override

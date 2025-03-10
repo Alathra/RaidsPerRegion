@@ -31,7 +31,6 @@ public abstract class RaidArea {
     public abstract boolean resetMobSpawningToDefault();
     public abstract boolean containsLocation(Location location);
 
-
     public String getName() {
         return name;
     }

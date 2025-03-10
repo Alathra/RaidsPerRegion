@@ -1,13 +1,20 @@
 package io.github.alathra.raidsperregion.raid.area;
 
+import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.event.town.toggle.TownToggleMobsEvent;
 import com.palmergames.bukkit.towny.exceptions.CancelledEventException;
 import com.palmergames.bukkit.towny.object.Town;
 import com.palmergames.bukkit.towny.object.TownBlock;
+import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.palmergames.bukkit.towny.object.WorldCoord;
 import com.palmergames.bukkit.util.BukkitTools;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.Collections;
+import java.util.Set;
 
 public class TownRaidArea extends RaidArea {
 
@@ -18,6 +25,14 @@ public class TownRaidArea extends RaidArea {
         town = base;
         setName();
         setType();
+    }
+
+    public static Set<String> getAllTownNames(@NotNull World world) {
+        TownyAPI townyAPI = TownyAPI.getInstance();
+        TownyWorld townyWorld = townyAPI.getTownyWorld(world);
+        if (townyWorld != null)
+            return townyWorld.getTowns().keySet();
+        return Collections.emptySet();
     }
 
     @Override

@@ -2,7 +2,6 @@ package io.github.alathra.raidsperregion.command;
 
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
-import com.palmergames.bukkit.towny.object.TownyWorld;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
@@ -22,11 +21,11 @@ import io.github.alathra.raidsperregion.raid.preset.RaidPreset;
 import io.github.alathra.raidsperregion.raid.preset.RaidPresetManager;
 import io.github.alathra.raidsperregion.raid.tier.RaidTier;
 import io.github.alathra.raidsperregion.raid.tier.RaidTierManager;
+import io.github.alathra.raidsperregion.utility.RandomUtil;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.kingdoms.constants.group.Kingdom;
-import org.kingdoms.main.Kingdoms;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -35,7 +34,7 @@ public class CommandUtil {
 
     public static Argument<RaidArea> createRaidAreaArgument(String nodeName, String typeNodeName, String worldNodeName) {
         return new CustomArgument<RaidArea, String>(new StringArgument(nodeName), info -> {
-            final String argAreaName = info.input().toLowerCase();
+            String argAreaName = info.input().toLowerCase();
             final String raidType = (String) info.previousArgs().get(typeNodeName);
             if (raidType == null)
                 throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid raid type argument").build());
@@ -49,12 +48,22 @@ public class CommandUtil {
                     RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(new BukkitWorld(world));
                     if (regionManager == null)
                         throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Encountered error when loading Worldguard RegionManager").build());
+                    if (argAreaName.equalsIgnoreCase("random")) {
+                        argAreaName = RandomUtil.getRandomElementInSet(RegionRaidArea.getAllRegionNames(world));
+                        if (argAreaName == null)
+                            throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Failed to get random region").build());
+                    }
                     ProtectedRegion region = regionManager.getRegion(argAreaName);
                     if (region == null)
                         throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid region name").build());
                     return new RegionRaidArea(region);
                 case "town":
                     if (Hook.getTownyHook().isHookLoaded()) {
+                        if (argAreaName.equalsIgnoreCase("random")) {
+                            argAreaName = RandomUtil.getRandomElementInSet(TownRaidArea.getAllTownNames(world));
+                            if (argAreaName == null)
+                                throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Failed to get random town").build());
+                        }
                         TownyAPI townyAPI = TownyAPI.getInstance();
                         Town town = townyAPI.getTown(argAreaName);
                         if (town == null)
@@ -63,6 +72,11 @@ public class CommandUtil {
                     }
                 case "kingdom":
                     if (Hook.KingdomsX.isLoaded()) {
+                        if (argAreaName.equalsIgnoreCase("random")) {
+                            argAreaName = RandomUtil.getRandomElementInSet(KingdomRaidArea.getAllKingdomNames(world));
+                            if (argAreaName == null)
+                                throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Failed to get random kingdom").build());
+                        }
                         Kingdom kingdom = Kingdom.getKingdom(argAreaName);
                         if (kingdom == null)
                             throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid kingdom name").build());
@@ -82,27 +96,23 @@ public class CommandUtil {
 
             switch (raidType) {
                 case "region":
-                    RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(new BukkitWorld(world));
-                    if (regionManager == null)
-                        return Collections.emptyList();
-                    return regionManager.getRegions().keySet();
+                    Set<String> regionNames = new HashSet<>(RegionRaidArea.getAllRegionNames(world));
+                    regionNames.add("random");
+                    return regionNames;
                 case "town":
                     if (Hook.Towny.isLoaded()) {
-                        TownyAPI townyAPI = TownyAPI.getInstance();
-                        TownyWorld townyWorld = townyAPI.getTownyWorld(world);
-                        if (townyWorld != null) {
-                            return townyWorld.getTowns().keySet();
-                        }
+                        Set<String> townNames = new HashSet<>(TownRaidArea.getAllTownNames(world));
+                        townNames.add("random");
+                        return townNames;
                     }
+                    return Collections.emptyList();
                 case "kingdom":
                     if (Hook.KingdomsX.isLoaded()) {
-                        // Get all kingdoms
-                        List<Kingdom> kingdoms = new ArrayList<>(Kingdoms.get().getDataCenter().getKingdomManager().getKingdoms());
-                        // Prune all not in selected world
-                        kingdoms.removeIf(kingdom -> !kingdom.getNexus().getBukkitWorld().equals(world));
-                        // return suggestions
-                        return kingdoms.stream().map(Kingdom::getName).toList();
+                        Set<String> kingdomNames = new HashSet<>(KingdomRaidArea.getAllKingdomNames(world));
+                        kingdomNames.add("random");
+                        return kingdomNames;
                     }
+                    return Collections.emptyList();
                 default:
                     return Collections.emptyList();
             }

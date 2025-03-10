@@ -473,11 +473,6 @@ public class Raid {
             player = (Player) offlinePlayer;
         }
 
-        // If raid mobs already spawned is at the limit, do not spawn
-        if (mobs.size() >= tier.getKillsGoal()) {
-            return;
-        }
-
         final int distanceFactorSubtractionPerSpawn = distanceFactor / 10;
 
         // 10 attempts to spawn a mob
