@@ -12,9 +12,9 @@ import io.github.alathra.raidsperregion.raid.tier.RaidTier;
 import io.github.alathra.raidsperregion.utility.Logger;
 import io.github.alathra.raidsperregion.utility.MythicMobsUtil;
 import io.github.alathra.raidsperregion.utility.RandomUtil;
-import io.github.alathra.raidsperregion.utility.StringUtil;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.kyori.adventure.title.Title;
 import net.megavex.scoreboardlibrary.api.sidebar.Sidebar;
 import net.megavex.scoreboardlibrary.api.sidebar.component.ComponentSidebarLayout;
@@ -222,14 +222,14 @@ public class Raid {
 
     public void runWinCommands() {
         for (String globalCmd : Settings.getRaidWinGlobalCommands()) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseMessage(globalCmd).toString());
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlainTextComponentSerializer.plainText().serialize(parseMessage(globalCmd)));
         }
 
         for (String perPlayerCmd : Settings.getRaidWinPerParticipantCommands()) {
             for (UUID playerUUID : this.participantsTable.rowKeySet()) {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerUUID);
                 if (offlinePlayer.isOnline()) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseMessage(perPlayerCmd, offlinePlayer).toString());
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlainTextComponentSerializer.plainText().serialize(parseMessage(perPlayerCmd, offlinePlayer)));
                 }
             }
         }
@@ -237,14 +237,14 @@ public class Raid {
 
     public void runLossCommands() {
         for (String globalCmd : Settings.getRaidLossGlobalCommands()) {
-            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseMessage(globalCmd).toString());
+            Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlainTextComponentSerializer.plainText().serialize(parseMessage(globalCmd)));
         }
 
         for (String perPlayerCmd : Settings.getRaidLossPerParticipantCommands()) {
             for (UUID playerUUID : this.participantsTable.rowKeySet()) {
                 OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerUUID);
                 if (offlinePlayer.isOnline()) {
-                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), parseMessage(perPlayerCmd, offlinePlayer).toString());
+                    Bukkit.dispatchCommand(Bukkit.getConsoleSender(), PlainTextComponentSerializer.plainText().serialize(parseMessage(perPlayerCmd, offlinePlayer)));
                 }
             }
         }
@@ -309,20 +309,20 @@ public class Raid {
 
         // check for win
         if (getTotalKills() >= tier.getKillsGoal()) {
-            onRaidWin();
+            onWin();
             return;
         }
 
         // check for loss
         if (secondsLeft <= 0) {
-            onRaidLoss();
+            onLoss();
             return;
         }
     }
 
     public void stop() {
+        clearSpawnedMobs();
         closeOut();
-
         if (Settings.areTitleMessagesEnabled())
             sendTitleToParticipants(Settings.getRaidCancelTitle(), Settings.getRaidCancelSubtitle());
     }
@@ -336,7 +336,7 @@ public class Raid {
         mobs.clear();
     }
 
-    public void onRaidWin() {
+    public void onWin() {
         // check for boss condition
         if (preset.hasBoss()) {
             if (!isBossSpawned) {
@@ -348,17 +348,17 @@ public class Raid {
             }
         }
 
-        closeOut();
+        if (Settings.areRaidResultConsoleCommandsEnabled())
+            this.runWinCommands();
 
         if (Settings.areTitleMessagesEnabled())
             sendTitleToParticipants(Settings.getRaidWinTitle(), Settings.getRaidWinSubtitle());
-
-        if (Settings.areRaidResultConsoleCommandsEnabled())
-            this.runWinCommands();
+        
+        clearSpawnedMobs();
+        closeOut();
     }
 
-    public void onRaidLoss() {
-        closeOut();
+    public void onLoss() {
 
         if (Settings.clearMobsOnRaidLoss())
             clearSpawnedMobs();
@@ -369,6 +369,7 @@ public class Raid {
         if (Settings.areRaidResultConsoleCommandsEnabled())
             runLossCommands();
 
+        closeOut();
     }
 
     public void spawnMobForSpecificParticipant(int distanceFactor, Player player) {
@@ -599,7 +600,6 @@ public class Raid {
             Logger.get().warn("Encountered internal error when resetting mob spawning for raid area <raid_area_name>");
         raidTimer.cancel();
         spawnMobsTimer.cancel();
-        clearSpawnedMobs();
         if (Settings.isScoreboardEnabled())
             removeScoreboards();
         RaidManager.deRegisterRaid(this);
