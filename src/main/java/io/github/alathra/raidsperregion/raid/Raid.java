@@ -1,5 +1,7 @@
 package io.github.alathra.raidsperregion.raid;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 import com.google.common.collect.HashBasedTable;
@@ -45,8 +47,11 @@ public class Raid {
     private final RaidTier tier;
     // The target area (region, town, etc.)
     private final RaidArea area;
+    // The scheduled time of the raid
+    private final Instant scheduledTime;
 
     // -- POST-START VARIABLES --
+    private final Instant initTime;
     // The number of seconds remaining in the raid
     private int secondsLeft;
     // The ActiveMobs (entities) of the spawned mobs in the raid
@@ -61,9 +66,11 @@ public class Raid {
     private int playerDeaths;
 
     // -- TASKS --
+    private BukkitTask scheduleTimer;
     private BukkitTask spawnMobsTimer;
     private BukkitTask raidTimer;
 
+    public final TreeMap<Integer, String> scheduleAnnouncements;
     // List of players who participate in a raid (defined as entering the raid region).
     // Integer is the amount of mob kills by the player
     private final Table<UUID, Integer, Sidebar> participantsTable;
@@ -71,7 +78,7 @@ public class Raid {
     // participants except when they leave the region they are removed from the list.
     private final Set<UUID> activeParticipants;
 
-    public Raid(@NotNull CommandSender starter, @NotNull World world, @NotNull RaidArea area, @NotNull RaidPreset preset, @NotNull RaidTier tier) {
+    protected Raid(@NotNull CommandSender starter, @NotNull World world, @NotNull RaidArea area, @NotNull RaidPreset preset, @NotNull RaidTier tier, @NotNull Instant scheduled) {
         plugin = RaidsPerRegion.getInstance();
         uuid = UUID.randomUUID();
         this.starter = starter;
@@ -79,8 +86,11 @@ public class Raid {
         this.preset = preset;
         this.tier = tier;
         this.area = area;
+        this.scheduledTime = scheduled;
+        initTime = Instant.now();
 
         // defaults
+        scheduleAnnouncements = Settings.getRaidSchedulerAnnouncements();
         participantsTable = HashBasedTable.create();
         activeParticipants = new HashSet<>();
         mobs = new HashSet<>();
@@ -173,21 +183,29 @@ public class Raid {
         }
     }
 
+    public int getScheduledMinutesLeft() {
+        if (scheduledTime == null) {
+            return 0;
+        }
+        int minutes = (int) Duration.between(Instant.now(), scheduledTime).toMinutes();
+        minutes++;
+        return minutes;
+    }
+
+    public int getScheduledSecondsLeft() {
+        if (scheduledTime == null) {
+            return 0;
+        }
+        int seconds = (int) Duration.between(Instant.now(), scheduledTime).toSeconds();
+        seconds++;
+        return seconds;
+    }
+
     public String getFormattedTimeLeft() {
         int hours = secondsLeft / 3600;
         int minutes = (secondsLeft % 3600) / 60;
         int seconds = secondsLeft % 60;
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
-    }
-
-    public void spawnMobsForAllActiveParticipants(int distanceFactor) {
-        for (UUID playerUUID : activeParticipants) {
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerUUID);
-            if (offlinePlayer.isOnline()) {
-                Player player = (Player) offlinePlayer;
-                spawnMobForSpecificParticipant(distanceFactor, player);
-            }
-        }
     }
 
     public void spawnMobsForCycle(int distanceFactor) {
@@ -269,26 +287,100 @@ public class Raid {
         activeParticipants.removeIf(playerUUID -> !playersInArea.contains(playerUUID));
     }
 
-    public void start() {
+    public boolean verify() {
+        // Check for difficulty peaceful, impossible to spawn hostile mobs
+        if (world.getDifficulty().equals(Difficulty.PEACEFUL)) {
+            Logger.get().warn(parseMessage("<red>Error in raid: Mob spawning could not be forced in <raid_area_name> due to config setting"));
+            starter.sendMessage(ColorParser.of("<red>Error in raid: Difficulty is peaceful").build());
+            return false;
+        }
         // Impossible to spawn mobs because unable to force mob spawning in area
         if (!Settings.forceMobSpawningInRegionOnRaidStart() && area.wasMobSpawningEnabledBeforeRaid()) {
-            Logger.get().warn("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name> due to config setting");
-            starter.sendMessage(parseMessage("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name> due to config setting"));
+            Logger.get().warn(parseMessage("<red>Error in raid: It is impossible to force mob spawning in <raid_area_name>"));
+            starter.sendMessage(parseMessage("<red>Error in raid: It is impossible to force mob spawning in <raid_area_name>"));
+            return false;
+        }
+        return true;
+    }
+
+    public void schedule() {
+        if (verify()) {
+            // You can't have two raids in the same area
+            for (Raid raid : RaidManager.getRaids()) {
+                if (this.area.getBase().equals(raid.area.getBase())) {
+                    Logger.get().warn(parseMessage("<red>Error in raid: There is already a registered raid in <raid_area_name>"));
+                    starter.sendMessage(parseMessage("<red>Error in raid: There is already a registered raid in <raid_area_name>"));
+                    return;
+                }
+            }
+            RaidManager.registerRaid(this);
+            // No scheduled minutes, start right away
+            if (scheduledTime == null) {
+                start();
+                return;
+            } else {
+                Logger.get().info(parseMessage("<green>You have scheduled a tier <raid_tier> raid on <raid_area_name>"));
+                starter.sendMessage(parseMessage("<green>You have scheduled a tier <raid_tier> raid on <raid_area_name>"));
+            }
+        } else {
+            Logger.get().info(parseMessage("<red>Failed safety check for raid on <raid_area_name>"));
+            starter.sendMessage(parseMessage("<red>Failed safety check for raid on <raid_area_name>"));
             return;
         }
-        if (!RaidManager.registerRaid(this)) {
-            Logger.get().warn("<red>Failed to start raid: There is already an ongoing raid in <raid_area_name>");
-            starter.sendMessage(parseMessage("<red>Failed to start raid: There is already an ongoing raid in <raid_area_name>"));
+
+        // Prune all announcement messages that would be after the scheduled time to start
+        scheduleAnnouncements.entrySet().removeIf(entry ->
+            initTime.plusSeconds(entry.getKey()).isAfter(scheduledTime.plusSeconds(1))
+        );
+
+        scheduleTimer = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            Instant now = Instant.now();
+
+            // Check for raid start
+            if (now.isAfter(scheduledTime)) {
+                scheduleTimer.cancel();
+                start();
+                return;
+            }
+
+            // Handle announcement messages
+            if (Settings.areRaidSchedulerAnnounceMessagedEnabled() && !scheduleAnnouncements.isEmpty()) {
+                Map.Entry<Integer, String> firstEntry = scheduleAnnouncements.firstEntry();
+                if (firstEntry != null) {
+                    // Calculate time remaining for the announcement
+                    Instant announcementTime = scheduledTime.minusSeconds(firstEntry.getKey());
+                    if (!now.isBefore(announcementTime)) {
+                        // Send the message to all players
+                        Bukkit.getOnlinePlayers().forEach(player ->
+                            player.sendMessage(parseMessage(firstEntry.getValue(), player))
+                        );
+
+                        // Remove the processed entry
+                        scheduleAnnouncements.remove(firstEntry.getKey());
+                    }
+                }
+            }
+        }, 0L, 20L);
+
+    }
+
+    public void start() {
+        if (verify()) {
+            Logger.get().info(parseMessage("<green>You have started a tier <raid_tier> raid on <raid_area_name>"));
+            starter.sendMessage(parseMessage("<green>You have started a tier <raid_tier> raid on <raid_area_name>"));
+        } else {
+            Logger.get().info(parseMessage("<red>Failed to start raid on <raid_area_name>"));
+            starter.sendMessage(parseMessage("<red>Failed to start raid on <raid_area_name>"));
+            return;
         }
-        Logger.get().info(parseMessage("<green>You have started a tier <raid_tier> raid on <raid_area_name>"));
-        starter.sendMessage(parseMessage("<green>You have started a tier <raid_tier> raid on <raid_area_name>"));
 
         // see if mob spawning is allowed in region, and force it on if necessary
         if (Settings.forceMobSpawningInRegionOnRaidStart()) {
             if(!area.forceMobSpawning()) {
-                Logger.get().warn("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name> due to an internal error");
+                Logger.get().warn(parseMessage("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name> due to an internal error"));
                 starter.sendMessage(parseMessage("<red>Failed to start raid: Mob spawning could not be forced in <raid_area_name> due to an internal error"));
-                stop(); // cancel the raid
+                clearSpawnedMobs();
+                closeOut();
                 RaidManager.deRegisterRaid(this);
             }
         }
@@ -553,6 +645,7 @@ public class Raid {
 
     }
 
+
     // Private methods
 
     public Component parseMessage(String raw) {
@@ -568,6 +661,8 @@ public class Raid {
             .parseMinimessagePlaceholder("raid_boss_name", preset.getBoss())
             .parseMinimessagePlaceholder("raid_participants_total_deaths", String.valueOf(playerDeaths))
             .parseMinimessagePlaceholder("raid_scoreboard_border", Settings.getScoreboardBorder())
+            .parseMinimessagePlaceholder("raid_scheduled_minutes_left", String.valueOf(getScheduledMinutesLeft()))
+            .parseMinimessagePlaceholder("raid_scheduled_seconds_left", String.valueOf(getScheduledSecondsLeft()))
             .build();
     }
 
@@ -586,6 +681,8 @@ public class Raid {
             .parseMinimessagePlaceholder("raid_boss_name", preset.getBoss())
             .parseMinimessagePlaceholder("raid_participants_total_deaths", String.valueOf(playerDeaths))
             .parseMinimessagePlaceholder("raid_scoreboard_border", Settings.getScoreboardBorder())
+            .parseMinimessagePlaceholder("raid_scheduled_minutes_left", String.valueOf(getScheduledMinutesLeft()))
+            .parseMinimessagePlaceholder("raid_scheduled_seconds_left", String.valueOf(getScheduledSecondsLeft()))
             .parsePAPIPlaceholders(participant)
             .build();
     }
@@ -593,8 +690,12 @@ public class Raid {
     private void closeOut() {
         if(!area.resetMobSpawningToDefault())
             Logger.get().warn("Encountered internal error when resetting mob spawning for raid area <raid_area_name>");
-        raidTimer.cancel();
-        spawnMobsTimer.cancel();
+        if (scheduleTimer != null && !scheduleTimer.isCancelled())
+            scheduleTimer.cancel();
+        if (raidTimer != null && !raidTimer.isCancelled())
+            raidTimer.cancel();
+        if (spawnMobsTimer != null && !spawnMobsTimer.isCancelled())
+            spawnMobsTimer.cancel();
         if (Settings.isScoreboardEnabled())
             removeScoreboards();
         RaidManager.deRegisterRaid(this);

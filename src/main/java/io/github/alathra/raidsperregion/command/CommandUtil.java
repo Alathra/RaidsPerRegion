@@ -6,10 +6,7 @@ import com.sk89q.worldedit.bukkit.BukkitWorld;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import dev.jorel.commandapi.arguments.Argument;
-import dev.jorel.commandapi.arguments.ArgumentSuggestions;
-import dev.jorel.commandapi.arguments.CustomArgument;
-import dev.jorel.commandapi.arguments.StringArgument;
+import dev.jorel.commandapi.arguments.*;
 import io.github.alathra.raidsperregion.hook.Hook;
 import io.github.alathra.raidsperregion.raid.Raid;
 import io.github.alathra.raidsperregion.raid.RaidManager;
@@ -183,6 +180,22 @@ public class CommandUtil {
             }
             return argTypeName;
         }).replaceSuggestions(ArgumentSuggestions.strings(RaidArea.getTypes()));
+    }
+
+    public static Argument<Integer> raidScheduledArgument(String nodeName) {
+        return new CustomArgument<Integer, String>(new StringArgument(nodeName), info -> {
+            final String argScheduledMinutes = info.input();
+            int minutes;
+            try {
+                minutes = Integer.parseInt(argScheduledMinutes);
+            } catch (NumberFormatException e) {
+                throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid schedule argument").build());
+            }
+            if (minutes <= 0) {
+                throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid schedule argument").build());
+            }
+            return minutes;
+        }).replaceSuggestions(ArgumentSuggestions.strings("30", "20", "15", "10", "5"));
     }
 
 }

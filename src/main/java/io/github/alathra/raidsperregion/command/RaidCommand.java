@@ -5,6 +5,7 @@ import dev.jorel.commandapi.CommandAPICommand;
 import dev.jorel.commandapi.executors.CommandArguments;
 import io.github.alathra.raidsperregion.RaidsPerRegion;
 import io.github.alathra.raidsperregion.raid.Raid;
+import io.github.alathra.raidsperregion.raid.RaidBuilder;
 import io.github.alathra.raidsperregion.raid.RaidManager;
 import io.github.alathra.raidsperregion.raid.area.RaidArea;
 import io.github.alathra.raidsperregion.raid.preset.RaidPreset;
@@ -13,9 +14,11 @@ import io.github.alathra.raidsperregion.raid.tier.RaidTier;
 import io.github.alathra.raidsperregion.raid.tier.RaidTierManager;
 import io.github.milkdrinkers.colorparser.ColorParser;
 import org.apache.logging.log4j.util.Strings;
-import org.bukkit.Difficulty;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 public class RaidCommand {
 
@@ -35,7 +38,7 @@ public class RaidCommand {
 
     private void sendHelpMenu(CommandSender sender) {
         sender.sendMessage("<gold>[-----RaidsPerRegion4 Help Menu----]");
-        sender.sendMessage(ColorParser.of("<green>Start a raid: <yellow>/raid start [type] [world] [area] <preset> <tier>").build());
+        sender.sendMessage(ColorParser.of("<green>Start a raid: <yellow>/raid start [type] [world] [area] <preset> <tier> <schedule minutes>").build());
         sender.sendMessage(ColorParser.of("<green>Cancel a raid: <yellow>/raid stop [raid]").build());
         sender.sendMessage(ColorParser.of("<green>View active raids: <yellow>/raid list").build());
     }
@@ -62,7 +65,8 @@ public class RaidCommand {
             )
             .withOptionalArguments(
                 CommandUtil.raidPresetArgument("preset"),
-                CommandUtil.raidTierArgument("tier")
+                CommandUtil.raidTierArgument("tier"),
+                CommandUtil.raidScheduledArgument("scheduled_minutes")
             )
             .executes((CommandSender sender, CommandArguments args) -> {
                 final String argType = (String) args.get("type");
@@ -93,6 +97,11 @@ public class RaidCommand {
                     raidTier = (RaidTier) args.get("tier");
                 }
 
+                Instant raidScheduled = null;
+                if (args.getOptional("scheduled_minutes").isPresent()) {
+                    raidScheduled = Instant.now().plus(1, ChronoUnit.MINUTES);
+                }
+
                 if (world == null)
                     throw CommandAPIBukkit.failWithAdventureComponent(ColorParser.of("<red>Invalid world argument").build());
                 if (raidArea == null)
@@ -102,12 +111,16 @@ public class RaidCommand {
                 if (raidTier == null)
                     throw CommandAPIBukkit.failWithAdventureComponent(ColorParser.of("<red>Invalid raid tier argument").build());
 
-                if (world.getDifficulty().equals(Difficulty.PEACEFUL)) {
-                    throw CommandAPIBukkit.failWithAdventureComponent(ColorParser.of("<red>Failed to start raid: Difficulty is peaceful").build());
-                }
+                Raid raid = new RaidBuilder()
+                    .setStarter(sender)
+                    .setWorld(world)
+                    .setArea(raidArea)
+                    .setPreset(raidPreset)
+                    .setTier(raidTier)
+                    .setScheduled(raidScheduled)
+                    .build();
 
-                Raid raid = new Raid(sender, world, raidArea, raidPreset, raidTier);
-                raid.start();
+                raid.schedule();
             });
     }
 

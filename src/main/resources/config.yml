@@ -111,3 +111,24 @@ RaidResultConsoleCommands:
       - "broadcast The tier <raid_tier> raid on <raid_area_name> has been lost!"
     perParticipant:
       - "eco take <raid_participant_name> 50"
+
+RaidScheduler:
+  AnnouncementMessages:
+    enabled: true
+    CustomIntervals:
+      - interval: 1800  # 30 minutes
+        message: "<gold>A tier <raid_tier> raid on <raid_area_name> will commence in <raid_scheduled_minutes_left> minutes"
+      - interval: 1200  # 20 minutes
+        message: "<gold>A tier <raid_tier> raid on <raid_area_name> will commence in <raid_scheduled_minutes_left> minutes"
+      - interval: 600  # 10 minutes
+        message: "<gold>A tier <raid_tier> raid on <raid_area_name> will commence in <raid_scheduled_minutes_left> minutes"
+      - interval: 300  # 5 minutes
+        message: "<gold>A tier <raid_tier> raid on <raid_area_name> will commence in <raid_scheduled_minutes_left> minutes"
+      - interval: 120  # 2 minutes
+        message: "<gold>A tier <raid_tier> raid on <raid_area_name> will commence in <raid_scheduled_minutes_left> minutes"
+      - interval: 60  # 1 minute
+        message: "<gold>A tier <raid_tier> raid on <raid_area_name> will commence in <raid_scheduled_minutes_left> minute"
+      - interval: 30  # 30 seconds
+        message: "<gold>A tier <raid_tier> raid on <raid_area_name> will commence in <raid_scheduled_seconds_left> seconds"
+      - interval: 10  # 10 seconds
+        message: "<gold>A tier <raid_tier> raid on <raid_area_name> will commence in <raid_scheduled_seconds_left> seconds"

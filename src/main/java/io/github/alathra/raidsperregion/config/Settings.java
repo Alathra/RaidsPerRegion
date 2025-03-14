@@ -8,10 +8,7 @@ import io.github.alathra.raidsperregion.raid.tier.RaidTier;
 import io.github.alathra.raidsperregion.raid.tier.RaidTierBuilder;
 import io.github.alathra.raidsperregion.utility.Cfg;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Settings {
 
@@ -195,6 +192,23 @@ public class Settings {
         @SuppressWarnings("unchecked")
         List<String> perParticipantsLossCommands = (List<String>) Cfg.get().getList("RaidResultConsoleCommands.raidLossCommands.perParticipant");
         return perParticipantsLossCommands;
+    }
+
+    public static boolean areRaidSchedulerAnnounceMessagedEnabled() {
+        return Cfg.get().getOrDefault("RaidScheduler.AnnouncementMessages.enabled", false);
+    }
+
+    public static TreeMap<Integer, String> getRaidSchedulerAnnouncements() {
+        TreeMap<Integer, String> announcementMessages = new TreeMap<>(Comparator.reverseOrder());
+        Map<?, ?> announcementMessagesMap = Cfg.get().getMap("RaidScheduler.AnnouncementMessages");
+        @SuppressWarnings("unchecked")
+        List<Map<?, ?>> intervalsList = (List<Map<?, ?>>) announcementMessagesMap.get("CustomIntervals");
+        for (Map<?, ?> intervalEntry : intervalsList) {
+            final int interval = (int) intervalEntry.get("interval");
+            final String message = (String) intervalEntry.get("message");
+            announcementMessages.put(interval, message);
+        }
+        return announcementMessages;
     }
 
 }
