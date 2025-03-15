@@ -20,7 +20,7 @@ RaidsPerRegion adds a customizable PvE (Player v.s. Enviornment) server event/mi
 ## Dependencies/Hooks
 ### Dependencies
 * #### [MythicMobs](https://www.spigotmc.org/resources/%E2%9A%94-mythicmobs-free-version-%E2%96%BAthe-1-custom-mob-creator%E2%97%84.5702/)
-* ### [WorldGuard](https://dev.bukkit.org/projects/worldguard) (requires [WorldEdit](https://modrinth.com/plugin/worldedit/versions) or [FastAsyncWorldEdit](https://www.spigotmc.org/resources/fastasyncworldedit.13932/))
+* #### [WorldGuard](https://dev.bukkit.org/projects/worldguard) (requires [WorldEdit](https://modrinth.com/plugin/worldedit/versions) or [FastAsyncWorldEdit](https://www.spigotmc.org/resources/fastasyncworldedit.13932/))
 ### Optional Hooks
 * #### [Factions](https://www.spigotmc.org/resources/factionsuuid.1035/)
     Adds the ability to start raids on Factions.
