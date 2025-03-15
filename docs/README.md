@@ -55,7 +55,7 @@ Grants the user the ability to start, stop and list raids
 ## Commands
 RaidsPerRegion adds the following commands:
 * ``/raid start [area_type] [world] [area_name] <raid_preset> <raid_tier> <scheduled_minutes>``
-Starts a raid with the given parameters. [] indiccates a required argument and <> indicates an optional argument.
+Starts a raid with the given parameters. [] indicates a required argument and <> indicates an optional argument.
 Selecting "random" for the area_name will pick a random area of the defined type in the defined world.
 * ``/raid stop [area_name]``
 Stops an ongoing or scheduled raid.
