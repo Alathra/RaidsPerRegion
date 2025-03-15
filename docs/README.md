@@ -39,7 +39,7 @@ A RaidsPerRegion "Raid" is a timed server event/minigame where players must kill
 Raid Presets define the what mobs will spawn in the raid and their details. This includes things such as mob levels, spawn chances/weights and an optional boss mob. This allows you to create infinite "kinds" of raids, with one being selected when starting a new raid. Presets are pre-defined in the [config.yml](https://github.com/Alathra/RaidsPerRegion/blob/main/src/main/resources/config.yml).
 
 #### Raid Tiers
-Raid Tiers define how hard the raid will be as well as general raid parmeters. This is where the time limit, kills goal (mobs kills needed to win), spawn rates and other settings can be found. This allows you to create infinite "levels" of raids. Tiers are pre-defined in the [config.yml](https://github.com/Alathra/RaidsPerRegion/blob/main/src/main/resources/config.yml).
+Raid Tiers define how hard the raid will be as well as general raid parameters. This is where the time limit, kills goal (mobs kills needed to win), spawn rates and other settings can be found. This allows you to create infinite "levels" of raids. Tiers are pre-defined in the [config.yml](https://github.com/Alathra/RaidsPerRegion/blob/main/src/main/resources/config.yml).
 
 #### Raid Scheduler
 
