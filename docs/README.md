@@ -43,7 +43,7 @@ Raid Tiers define how hard the raid will be as well as general raid parameters. 
 
 #### Raid Scheduler
 
-Raids can be scheduled to execute at set number of minutes from when the start command is run. Announcement messages can be configured in the [config.yml](https://github.com/Alathra/RaidsPerRegion/blob/main/src/main/resources/config.yml) that can be used to warn players before a raid starts. Since Raids can be started by console, it is possible to schedule raids via a scheduled task on your server pannel or server's operating system.
+Raids can be scheduled to execute at set number of minutes from when the start command is run. Announcement messages can be configured in the [config.yml](https://github.com/Alathra/RaidsPerRegion/blob/main/src/main/resources/config.yml) that can be used to warn players before a raid starts. Since Raids can be started by console, it is possible to schedule raids via a scheduled task on your server panel or server's operating system.
 
 ---
 
