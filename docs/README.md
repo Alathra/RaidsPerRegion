@@ -7,7 +7,7 @@
     <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/Alathra/AlathraPorts?style=for-the-badge&labelColor=141417">
     <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Alathra/AlathraPorts?style=for-the-badge&labelColor=141417">
 </p>
-<p align="center"><img src="https://github.com/Alathra/AlathraPorts/blob/main/docs/assets/alathra_ports_logo_flag.gif?raw=true" alt="AlathraPorts Logo Flag" /></p>
+<p align="center"><img src="https://raw.githubusercontent.com/Alathra/RaidsPerRegion/refs/heads/main/docs/assets/raids_per_region_logo.png?token=GHSAT0AAAAAACX63Z3ZL7HZEYRWXWC4X2AOZ6VWFMA" alt="RaidsPerRegion" /></p>
 
 ---
 
