@@ -3,22 +3,41 @@
 # ==========================================
 
 GlobalRaidSettings:
+  # Stops vanilla mobs from spawning in the raid area when a raid is ongoing
   PreventVanillaMobsSpawningInRaids: true
+  # If the plugin has the ability to force mob spawning if it is turned off in the area
   ForceMobSpawningInRegionOnRaidStart: true
+  # If players keep their inventory when dying in the raid area during a raid
   KeepInventoryOnPlayerDeath: false
+  # If players keep their experience when dying in the raid area during a raid
   KeepEXPOnPlayerDeath: false
+  # If PvP is disabled in the raid area during a raid
   DisablePvPInRaids: false
+  # If all the raid mobs will be cleared when a raid is lost
   ClearMobsOnRaidLoss: false
+  # If player deaths in the raid area during a raid will result in a death message in the chat
   ShowPlayerDeathMessagesInRaids: true
 
+# ==========================================
+# |           Raid Configuration           |
+# ==========================================
+
 RaidPresets:
+  # This is the name of the preset and can be anything. It will be referenced in the /raid start command
   Skeletal:
+    # If the plugin will default to using this preset if there is no preset specified when starting a raid
     default: false
+    # If the preset has a boss, put the MythicMob ID (name), if no boss leave blank
     boss:
+    # The list of mobs that will spawn with this preset
     mobs:
+      # The MythicMob ID (name)
       SkeletalMinion:
+        # The mob level. If not using mob levels, put "1.0"
         mobLevel: 1.0
+        # The percentage chance that this mob will be selected to spawn each time a new mob needs to be spawned
         chance: 0.60
+        # The spawn weight. Mobs with a higher weight will have priority if their chance is hit
         weight: 1
       SkeletalKnight:
         mobLevel: 1.0
@@ -50,12 +69,21 @@ RaidPresets:
         weight: 4
 
 RaidTiers:
+  # This is the name of the tier and can be anything. It will be referenced in the /raid start command
   1:
+    # If the plugin will default to using this tier if there is no tier specified when starting a raid
     default: true
+    # The maximum number of living mobs allowed at once. If this limit is reached spawning will stop until it decreases
     maxMobsAtOnce: 100
+    # The number of mobs that need to be killed to win the raid
     killsGoal: 100
+    # The time limit (in seconds) of the raid
     timeLimit: 600
+    # The number of mobs that will be spawned from the preset for each spawning cycle
     mobSpawnsPerCycle: 2
+    # The length of each spawning cycle. The default rate (1.0) is 1 second
+    # Example: Setting this to "0.5" would produce a 2-second cycle
+    # Example: Setting this to "2.0" would produce a 0.5-second cycle
     cycleRate: 1.0
   2:
     default: false
@@ -72,10 +100,42 @@ RaidTiers:
     mobSpawnsPerCycle: 2
     cycleRate: 1.0
 
+# ==========================================
+# |      Text & Commands Configuration     |
+# ==========================================
+
+# RaidsPerRegion uses MiniMessage to facilitate text formatting including colors
+# MiniMessage Docs: https://docs.advntr.dev/minimessage/format
+# MiniMessage Viewer: https://webui.advntr.dev/
+
+# ----- Placeholders -----
+# RaidsPerRegion has a number of MiniMessage placeholders for you to use to customize the following settings
+
+# <raid_area_name>: The name of the raid area, the name of the place where the raid is
+# <raid_area_type>: The type of the raid area ("region", "town", etc.)
+# <raid_starter>: The name of the person who started the raid. Can be "console"
+# <raid_time_left>: The formatted time remaining in the raid
+# <raid_kills_goal>: The amount of raid mobs needed to be killed to win the raid
+# <raid_total_kills>: How many raid mobs killed so far
+# <raid_boss_name>: The name of the raid boss, blank if none
+# <raid_participants_total_deaths>: The total number of player deaths in the raid
+# <raid_scoreboard_border>: An optional border text that can be used in the scoreboard lines
+# <raid_scheduled_minutes_left>: If a raid is scheduled, how many total minutes are left until it starts
+# <raid_scheduled_seconds_left>: If a raid is scheduled, how many total seconds are left until it starts
+
+# ----- Per-Player Placeholders ---
+# <raid_participant_name>: The name of the player
+# <raid_participant_kills>: How many raid mob kills the player has
+
+
 Scoreboard:
+  # If the raid scoreboards (sidebar menu) will be displayed for raid participants
   enabled: true
+  # The scoreboard title
   title: "<dark_red><bold> Tier <raid_tier> Raid - <raid_area_name>"
+  # An optional border text that can be used in the scoreboard lines
   border: "-------------------------"
+  # The lines of the scoreboard
   lines:
     - "<dark_red><bold><raid_scoreboard_border>"
     - "<gold>Time Left: <raid_time_left>"
@@ -86,6 +146,7 @@ Scoreboard:
     - "<gold>Your Kills: <raid_participant_kills>"
 
 TitleMessages:
+  # If the title messages will show
   enabled: true
   raidStartTitle: "<dark_red><bold>Tier <raid_tier> Raid Inbound"
   raidStartSubtitle: "<gold>Prepare to fight!"
@@ -99,13 +160,18 @@ TitleMessages:
   raidBossSpawnSubtitle: "<gold>Kill <raid_boss_name> to win the raid!"
 
 RaidResultConsoleCommands:
+  # If raid win/loss commands will be executed
   enabled: true
+  # Executed when a raid is won
   raidWinCommands:
+    # Executed once
     global:
       - "broadcast The tier <raid_tier> raid on <raid_area_name> has been won!"
+    # Executed for each player who participated in the raid
     perParticipant:
       - "eco give <raid_participant_name> 100"
       - "msg <raid_participant_name> nice job!"
+  # Executed when a raid is lost
   raidLossCommands:
     global:
       - "broadcast The tier <raid_tier> raid on <raid_area_name> has been lost!"
@@ -114,8 +180,11 @@ RaidResultConsoleCommands:
 
 RaidScheduler:
   AnnouncementMessages:
+    # If automated raid announcement messages will be shown
     enabled: true
     CustomIntervals:
+      # When the raid is this number of seconds away, its associated message will be shown in chat to all online players
+      # If the raid is scheduled for a time that is shorter than this, it will be ignored
       - interval: 1800  # 30 minutes
         message: "<gold>A tier <raid_tier> raid on <raid_area_name> will commence in <raid_scheduled_minutes_left> minutes"
       - interval: 1200  # 20 minutes
