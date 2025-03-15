@@ -1,0 +1,9 @@
+Steps to generate RRP font:
+1: https://cooltext.com/
+2: "Fun" organge bubble text
+3: Font is "Kredit" under 3-D styles
+4: 120 font size
+
+RaidsPerRegion Logo:
+size: 256 x 256
+file: .png
