@@ -1,5 +1,7 @@
 package io.github.alathra.raidsperregion.command;
 
+import com.massivecraft.factions.Faction;
+import com.massivecraft.factions.Factions;
 import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Town;
 import com.sk89q.worldedit.bukkit.BukkitWorld;
@@ -10,10 +12,7 @@ import dev.jorel.commandapi.arguments.*;
 import io.github.alathra.raidsperregion.hook.Hook;
 import io.github.alathra.raidsperregion.raid.Raid;
 import io.github.alathra.raidsperregion.raid.RaidManager;
-import io.github.alathra.raidsperregion.raid.area.KingdomRaidArea;
-import io.github.alathra.raidsperregion.raid.area.RaidArea;
-import io.github.alathra.raidsperregion.raid.area.RegionRaidArea;
-import io.github.alathra.raidsperregion.raid.area.TownRaidArea;
+import io.github.alathra.raidsperregion.raid.area.*;
 import io.github.alathra.raidsperregion.raid.preset.RaidPreset;
 import io.github.alathra.raidsperregion.raid.preset.RaidPresetManager;
 import io.github.alathra.raidsperregion.raid.tier.RaidTier;
@@ -79,6 +78,18 @@ public class CommandUtil {
                             throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid kingdom name").build());
                         return new KingdomRaidArea(kingdom);
                     }
+                case "faction":
+                    if (Hook.FactionsUUID.isLoaded()) {
+                        if (argAreaName.equalsIgnoreCase("random")) {
+                            argAreaName = RandomUtil.getRandomElementInSet(FactionRaidArea.getAllFactionNames(world));
+                            if (argAreaName == null)
+                                throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Failed to get random faction").build());
+                        }
+                        Faction faction = Factions.getInstance().getByTag(argAreaName);
+                        if (faction == null)
+                            throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid faction name").build());
+                        return new FactionRaidArea(faction);
+                    }
                 default:
                     throw CustomArgument.CustomArgumentException.fromAdventureComponent(ColorParser.of("<red>Invalid raid type argument").build());
             }
@@ -94,20 +105,31 @@ public class CommandUtil {
             switch (raidType) {
                 case "region":
                     Set<String> regionNames = new HashSet<>(RegionRaidArea.getAllRegionNames(world));
-                    regionNames.add("random");
+                    if (!regionNames.isEmpty())
+                        regionNames.add("random");
                     return regionNames;
                 case "town":
                     if (Hook.Towny.isLoaded()) {
                         Set<String> townNames = new HashSet<>(TownRaidArea.getAllTownNames(world));
-                        townNames.add("random");
+                        if (!townNames.isEmpty())
+                            townNames.add("random");
                         return townNames;
                     }
                     return Collections.emptyList();
                 case "kingdom":
                     if (Hook.KingdomsX.isLoaded()) {
                         Set<String> kingdomNames = new HashSet<>(KingdomRaidArea.getAllKingdomNames(world));
-                        kingdomNames.add("random");
+                        if (!kingdomNames.isEmpty())
+                            kingdomNames.add("random");
                         return kingdomNames;
+                    }
+                    return Collections.emptyList();
+                case "faction":
+                    if (Hook.FactionsUUID.isLoaded()) {
+                        Set<String> factionNames = new HashSet<>(FactionRaidArea.getAllFactionNames(world));
+                        if (!factionNames.isEmpty())
+                            factionNames.add("random");
+                        return factionNames;
                     }
                     return Collections.emptyList();
                 default:

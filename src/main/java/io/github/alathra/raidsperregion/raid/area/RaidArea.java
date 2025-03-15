@@ -64,6 +64,8 @@ public abstract class RaidArea {
                 types.add("town");
             if (Hook.KingdomsX.isLoaded())
                 types.add("kingdom");
+            if (Hook.FactionsUUID.isLoaded())
+                types.add("faction");
         }, 1L);
     }
 

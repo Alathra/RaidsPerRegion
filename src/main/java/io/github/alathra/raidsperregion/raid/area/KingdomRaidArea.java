@@ -41,13 +41,11 @@ public class KingdomRaidArea extends RaidArea {
 
     @Override
     public boolean forceMobSpawning() {
-        // TODO:
         return true;
     }
 
     @Override
     public boolean resetMobSpawningToDefault() {
-        // TODO:
         return true;
     }
 

@@ -27,6 +27,7 @@ mythicmobs = "io.lumine:Mythic-Dist:5.8.0"
 worldguardbukkit = "com.sk89q.worldguard:worldguard-bukkit:7.0.9"
 towny = "com.palmergames.bukkit.towny:towny:0.101.1.5"
 kingdomsx = "com.github.cryptomorin:kingdoms:1.17.10-BETA"
+factionsuuid = "dev.kitteh:factionsuuid:0.7.0"
 
 
 # Testing

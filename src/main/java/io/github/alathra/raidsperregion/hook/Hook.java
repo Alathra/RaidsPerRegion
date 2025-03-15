@@ -1,5 +1,6 @@
 package io.github.alathra.raidsperregion.hook;
 
+import io.github.alathra.raidsperregion.hook.factionsuuid.FactionsUUIDHook;
 import io.github.alathra.raidsperregion.hook.kingdomx.KingdomsXHook;
 import io.github.alathra.raidsperregion.hook.placeholderapi.PAPIHook;
 import io.github.alathra.raidsperregion.hook.towny.TownyHook;
@@ -15,7 +16,8 @@ public enum Hook {
     PAPI(PAPIHook.class, "PlaceholderAPI", true),
     Vault(VaultHook.class, "Vault", true),
     Towny(TownyHook.class, "Towny", true),
-    KingdomsX(KingdomsXHook.class, "Kingdoms", true);
+    KingdomsX(KingdomsXHook.class, "Kingdoms", true),
+    FactionsUUID(FactionsUUIDHook.class, "Factions", true);
 
     private final @NotNull Class<? extends AbstractHook> hookClass; // The hook class used by this hook
     private final @Nullable String pluginName; // The plugin name used by this hook or null if not applicable
