@@ -1,11 +1,11 @@
 <h1 style="text-align:center;">RaidsPerRegion4</h1>
 <p style="text-align:center;">
-    <img alt="GitHub License" src="https://img.shields.io/github/license/Alathra/AlathraPorts?style=for-the-badge&color=blue&labelColor=141417">
-    <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/Alathra/AlathraPorts/total?style=for-the-badge&labelColor=141417">
-    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/Alathra/AlathraPorts?include_prereleases&sort=semver&style=for-the-badge&label=LATEST%20VERSION&labelColor=141417">
-    <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/Alathra/AlathraPorts/ci.yml?style=for-the-badge&labelColor=141417">
-    <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/Alathra/AlathraPorts?style=for-the-badge&labelColor=141417">
-    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Alathra/AlathraPorts?style=for-the-badge&labelColor=141417">
+    <img alt="GitHub License" src="https://img.shields.io/github/license/Alathra/RaidsPerRegion?style=for-the-badge&color=blue&labelColor=141417">
+    <img alt="GitHub Downloads (all assets, all releases)" src="https://img.shields.io/github/downloads/Alathra/RaidsPerRegion/total?style=for-the-badge&labelColor=141417">
+    <img alt="GitHub Release" src="https://img.shields.io/github/v/release/Alathra/RaidsPerRegion?include_prereleases&sort=semver&style=for-the-badge&label=LATEST%20VERSION&labelColor=141417">
+    <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/Alathra/RaidsPerRegion/ci.yml?style=for-the-badge&labelColor=141417">
+    <img alt="GitHub Issues or Pull Requests" src="https://img.shields.io/github/issues/Alathra/RaidsPerRegion?style=for-the-badge&labelColor=141417">
+    <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/Alathra/RaidsPerRegion?style=for-the-badge&labelColor=141417">
 </p>
 <p align="center"><img src="https://raw.githubusercontent.com/Alathra/RaidsPerRegion/refs/heads/main/docs/assets/raids_per_region_logo.png?token=GHSAT0AAAAAACX63Z3ZL7HZEYRWXWC4X2AOZ6VWFMA" alt="RaidsPerRegion" /></p>
 
