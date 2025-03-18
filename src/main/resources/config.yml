@@ -17,6 +17,8 @@ GlobalRaidSettings:
   ClearMobsOnRaidLoss: false
   # If player deaths in the raid area during a raid will result in a death message in the chat
   ShowPlayerDeathMessagesInRaids: true
+  # If spawn locations outside the raid area will be allowed, usually just outside the borders
+  AllowMobSpawnsOutsideRaidArea: false
 
 # ==========================================
 # |           Raid Configuration           |

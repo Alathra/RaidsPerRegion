@@ -530,9 +530,11 @@ public class Raid {
 
             // if mob cannot spawn inside the region, try again with smaller radius
             Location spawnLocation = new Location(world, x, y, z);
-            if (!area.containsLocation(spawnLocation)) {
-                distanceFactor -= distanceFactorSubtractionPerSpawn;
-                continue;
+            if (!Settings.isMobSpawnsOutsideRaidAreaAllowed()) {
+                if (!area.containsLocation(spawnLocation)) {
+                    distanceFactor -= distanceFactorSubtractionPerSpawn;
+                    continue;
+                }
             }
 
             // spawn mob
@@ -624,9 +626,11 @@ public class Raid {
 
             // if mob cannot spawn inside the region, try again with smaller radius
             Location spawnLocation = new Location(world, x, y, z);
-            if (!area.containsLocation(spawnLocation)) {
-                distanceFactor -= distanceFactorSubtractionPerSpawn;
-                continue;
+            if (!Settings.isMobSpawnsOutsideRaidAreaAllowed()) {
+                if (!area.containsLocation(spawnLocation)) {
+                    distanceFactor -= distanceFactorSubtractionPerSpawn;
+                    continue;
+                }
             }
 
             // spawn boss

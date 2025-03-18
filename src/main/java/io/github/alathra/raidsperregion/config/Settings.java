@@ -40,6 +40,10 @@ public class Settings {
         return Cfg.get().getOrDefault("GlobalRaidSettings.ShowPlayerDeathMessagesInRaids", true);
     }
 
+    public static boolean isMobSpawnsOutsideRaidAreaAllowed() {
+        return Cfg.get().getOrDefault("GlobalSettings.AllowMobSpawnsOutsideRaidArea", false);
+    }
+
     public static List<RaidPreset> getRaidPresets() {
         List<RaidPreset> raidPresets = new ArrayList<>();
         Map<?, ?> raidPresetsMap = Cfg.get().getMap("RaidPresets");
