@@ -1,6 +1,6 @@
 [versions]
 crate = "4.0.0-RC.2"
-commandapi = "9.7.0"
+commandapi = "10.0.0"
 
 [libraries]
 # Core dependencies
