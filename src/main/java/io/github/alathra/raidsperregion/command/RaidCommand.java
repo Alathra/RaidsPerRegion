@@ -99,7 +99,7 @@ public class RaidCommand {
 
                 Instant raidScheduled = null;
                 if (args.getOptional("scheduled_minutes").isPresent()) {
-                    raidScheduled = Instant.now().plus(1, ChronoUnit.MINUTES);
+                    raidScheduled = Instant.now().plus((int) args.getOptional("scheduled_minutes").get(), ChronoUnit.MINUTES);
                 }
 
                 if (world == null)
