@@ -15,7 +15,7 @@ crate-yaml = { module = "io.github.milkdrinkers:crate-yaml", version.ref = "crat
 colorparser = "io.github.milkdrinkers:colorparser:3.0.1"
 commandapi-shade = { module = "dev.jorel:commandapi-bukkit-shade", version.ref = "commandapi" }
 commandapi-annotations = { module = "dev.jorel:commandapi-annotations", version.ref = "commandapi" }
-triumph-gui = "dev.triumphteam:triumph-gui:3.1.11"
+triumph-gui = "dev.triumphteam:triumph-gui:3.1.12"
 scoreboardlibraryapi = "net.megavex:scoreboard-library-api:2.3.1"
 scoreboardlibraryruntime = "net.megavex:scoreboard-library-implementation:2.3.1"
 scoreboardlibrarymodernpacketadapter = "net.megavex:scoreboard-library-modern:2.3.1"
