@@ -147,7 +147,7 @@ tasks {
 
     runServer {
         // Configure the Minecraft version for our task.
-        minecraftVersion("1.21.4")
+        minecraftVersion("1.21.5")
 
         // IntelliJ IDEA debugger setup: https://docs.papermc.io/paper/dev/debugging#using-a-remote-debugger
         jvmArgs("-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005", "-DPaper.IgnoreJavaVersion=true", "-Dcom.mojang.eula.agree=true", "-DIReallyKnowWhatIAmDoingISwear", "-Dpaper.playerconnection.keepalive=6000")
@@ -160,7 +160,7 @@ tasks {
             hangar("PlaceholderAPI", "2.11.6")
             modrinth("FastAsyncWorldEdit", "2.12.3")
             modrinth("WorldGuard", "7.0.13")
-            modrinth("MythicMobs", "5.8.0")
+            //modrinth("MythicMobs", "5.8.0")
         }
     }
 }
