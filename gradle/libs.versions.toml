@@ -31,7 +31,7 @@ factionsuuid = "dev.kitteh:factionsuuid:0.7.0"
 
 
 # Testing
-junit-bom = "org.junit:junit-bom:5.12.1"
+junit-bom = "org.junit:junit-bom:5.13.2"
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform = { module = "org.junit.platform:junit-platform-launcher" }
 slf4j = "org.slf4j:slf4j-simple:2.1.0-alpha1"
