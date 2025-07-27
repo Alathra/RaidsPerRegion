@@ -30,7 +30,8 @@ public class RaidCommand {
                 startCommand(),
                 stopCommand(),
                 listCommand(),
-                helpCommand()
+                helpCommand(),
+                reloadCommand()
             )
             .executes(this::defaultCommand)
             .register();
@@ -45,6 +46,15 @@ public class RaidCommand {
 
     private void defaultCommand(CommandSender sender, CommandArguments args) {
         sendHelpMenu(sender);
+    }
+
+    public CommandAPICommand reloadCommand() {
+        return new CommandAPICommand("reload")
+            .withPermission(RaidsPerRegion.getAdminPermission())
+            .executes((CommandSender sender, CommandArguments args) -> {
+                RaidsPerRegion.getInstance().getConfigHandler().reloadConfig();
+                sender.sendMessage(ColorParser.of("<yellow>Config settings reloaded").build());
+            });
     }
 
     public CommandAPICommand helpCommand() {

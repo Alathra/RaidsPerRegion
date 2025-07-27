@@ -4,6 +4,8 @@ import io.github.alathra.raidsperregion.raid.preset.RaidPresetManager;
 import io.github.milkdrinkers.crate.Config;
 import io.github.alathra.raidsperregion.RaidsPerRegion;
 import io.github.alathra.raidsperregion.Reloadable;
+import io.github.milkdrinkers.crate.ConfigBuilder;
+import io.github.milkdrinkers.crate.internal.settings.ReloadSetting;
 
 import javax.inject.Singleton;
 
@@ -21,7 +23,15 @@ public class ConfigHandler implements Reloadable {
 
     @Override
     public void onLoad(RaidsPerRegion plugin) {
-        cfg = new Config("config", plugin.getDataFolder().getPath(), plugin.getResource("config.yml")); // Create a config file from the template in our resources folder
+        cfg = ConfigBuilder
+            .fromPath("config", plugin.getDataFolder().getPath())
+            .addInputStream(plugin.getResource("config.yml"))
+            .setReloadSetting(ReloadSetting.MANUALLY)
+            .create();
+    }
+
+    public void reloadConfig() {
+        cfg.forceReload();
     }
 
     @Override
