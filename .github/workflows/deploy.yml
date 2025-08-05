@@ -18,7 +18,7 @@ jobs:
     runs-on: ${{ inputs.os }}
     steps:
       - name: Download Snapshot
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: Release
           run-id: ${{ github.event.workflow_run.id }}
