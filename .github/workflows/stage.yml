@@ -26,7 +26,7 @@ jobs:
     runs-on: ${{ inputs.os }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup JDK
         uses: ./.github/actions/jdk
@@ -61,7 +61,7 @@ jobs:
       # Checkout repository
       - name: Checkout Repository
         if: contains(github.ref_name, '-RC-') == false
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       # Update version field in project properties file
       - name: Update Gradle Project Version
@@ -84,7 +84,7 @@ jobs:
     runs-on: ${{ inputs.os }}
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup JDK
         uses: ./.github/actions/jdk
